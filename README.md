@@ -99,7 +99,7 @@ A jelszavakat a rendszer **nem tárolja olvasható szövegként**.
 
 ---
 
-## ℹ️ Kernel Level Protection (NIncs semmi csak jol hangzik)
+## ℹ️ Kernel Level Protection (Nincs semmi csak jol hangzik)
 
 ### Anti-Cheating System
 
