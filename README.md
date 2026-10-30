@@ -20,9 +20,9 @@ A kérdések és válaszok természetesen magyarul vannak, hogy a vizsgán ne é
 
 ---
 
-## ℹ️ THE GOSLING KNOWLEDGE BASE
+## ℹ️ Kurva sok kérdés van(majd lesz)
 
-Jelenleg **x darab KRESZ-kérdés** várja, hogy megdolgoztasd az agyad.
+Jelenleg **X darab KRESZ-kérdés** várja, hogy megrepeszd az agyad.
 
 Minden kérdéshez tartozik:
 
@@ -39,11 +39,11 @@ A kérdésbank az eredeti tanulási jegyzetekből készült, további KRESZ-info
 
 ---
 
-## 🔐 LCrypt397
+## 🔐 LCRYPT397
 
 ### AES-256-GCM Encryption
 
-Itt a válaszokat nem osztogatjuk úgy, mint a szórólapokat a Blahán.
+Itt a válaszokat nem osztogatjuk úgy, mint a szórólapokat a nyiltnapon.
 
 A projekt **AES-256-GCM titkosítást** használ két különálló, titkosított adatállománnyal.
 
