@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261030-question-bank">
+  <link rel="stylesheet" href="styles.css?v=20261030-island-settings">
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -39,12 +39,37 @@
     </form>
     <button class="auth-switch" id="authSwitch" type="button">Need an account? Create one</button>
   </dialog>
+  <dialog class="settings-dialog glass" id="settingsDialog" aria-labelledby="settingsTitle">
+    <button class="auth-close" id="settingsClose" type="button" aria-label="Close settings">×</button>
+    <div class="settings-kicker"><span class="eyebrow-dot"></span> YOUR PRACTICE</div>
+    <h2 id="settingsTitle">Personalize</h2>
+    <p class="settings-description">Choose the glow behind your practice space.</p>
+    <label class="color-setting" for="backgroundColor">
+      <span><strong>Background glow</strong><small>Saved on this device</small></span>
+      <input id="backgroundColor" type="color" value="#956bff" aria-label="Choose background glow color">
+    </label>
+    <div class="color-presets" aria-label="Glow color presets">
+      <button type="button" class="color-swatch" data-color="#956bff" aria-label="Lavender" title="Lavender"></button>
+      <button type="button" class="color-swatch" data-color="#ed70bf" aria-label="Pink" title="Pink"></button>
+      <button type="button" class="color-swatch" data-color="#4d91ff" aria-label="Blue" title="Blue"></button>
+      <button type="button" class="color-swatch" data-color="#38c98a" aria-label="Green" title="Green"></button>
+      <button type="button" class="color-swatch" data-color="#ff875e" aria-label="Orange" title="Orange"></button>
+      <button type="button" class="color-swatch" data-color="#ffffff" aria-label="White" title="White"></button>
+    </div>
+    <button class="settings-reset" id="resetGlow" type="button">Reset to lavender</button>
+    <a class="github-link" href="https://github.com/tihonovka/Driving-License" target="_blank" rel="noreferrer">
+      <span>Visit my GitHub</span><span aria-hidden="true">↗</span>
+    </a>
+  </dialog>
   <aside class="rail glass" aria-label="App controls">
     <a class="brand-mark" href="#" aria-label="Drive home">
       <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 28.5 13.6 18a4 4 0 0 1 3.8-2.7h13.2a4 4 0 0 1 3.8 2.7L38 28.5v8.2a2.3 2.3 0 0 1-2.3 2.3h-1.4a2.3 2.3 0 0 1-2.3-2.3v-2H16v2a2.3 2.3 0 0 1-2.3 2.3h-1.4a2.3 2.3 0 0 1-2.3-2.3z"/><path d="M14.4 25.7h19.2M17 31h.1m13.8 0h.1"/></svg>
     </a>
     <button class="rail-button logout-button" id="logoutButton" aria-label="Sign out" title="Sign out" hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4m4-4H9"/></svg>
+    </button>
+    <button class="rail-button settings-button" id="settingsButton" aria-label="Personalization settings" title="Settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2Z"/><path d="m19.4 13.5 1.1.8-1.1 1.9-1.3-.5a7.6 7.6 0 0 1-1.5.9l-.2 1.4h-2.2l-.4-1.3a7.5 7.5 0 0 1-1.8 0l-.7 1.2-1.9-1.1.5-1.3a7.6 7.6 0 0 1-.9-1.5l-1.4-.2v-2.2l1.3-.4a7.5 7.5 0 0 1 0-1.8l-1.2-.7 1.1-1.9 1.3.5a7.6 7.6 0 0 1 1.5-.9l.2-1.4h2.2l.4 1.3a7.5 7.5 0 0 1 1.8 0l.7-1.2 1.9 1.1-.5 1.3a7.6 7.6 0 0 1 .9 1.5l1.4.2v2.2l-1.3.4a7.5 7.5 0 0 1 0 1.8Z"/></svg>
     </button>
     <div class="rail-progress" id="railProgress" aria-label="Question progress" hidden>
       <span id="railQuestionIndex">01</span>
@@ -57,6 +82,10 @@
       <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8 8.8 8.8 0 1 0 20.2 15.1Z"/></svg>
     </button>
   </aside>
+  <div class="dynamic-island" id="dynamicIsland" hidden role="status" aria-live="polite" aria-label="Quiz score">
+    <span class="island-result" id="islandResult" aria-hidden="true"><span id="islandResultIcon">•</span></span>
+    <span class="island-score"><b id="islandScoreCount">0</b><small id="islandScoreLabel">correct so far</small></span>
+  </div>
 
   <main class="page-shell">
     <header class="page-heading">
@@ -102,13 +131,11 @@
         <div class="answers" id="answers" role="radiogroup" aria-label="Answer choices"></div>
         <div class="feedback glass" id="feedback" hidden aria-live="polite">
           <div class="feedback-heading"><span class="feedback-icon" id="feedbackIcon"></span><strong id="feedbackTitle"></strong><a id="sourceLink" target="_blank" rel="noreferrer" hidden>Official KRESZ ↗</a></div>
-          <div class="success-burst" id="successBurst" aria-hidden="true" hidden><span class="success-orb"><svg viewBox="0 0 40 40"><path d="m10 21 7 7 14-16"/></svg></span></div>
           <p lang="hu" id="feedbackText"></p>
         </div>
       </div>
 
       <footer class="practice-footer">
-        <div class="score-line"><span class="score-pip"></span><span><b id="scoreCount">0</b> correct so far</span></div>
         <button class="primary-button" id="actionButton" disabled><span id="actionLabel">Check answer</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4"/></svg></button>
       </footer>
     </section>
@@ -116,6 +143,6 @@
     <p class="page-note" id="pageNote" hidden>Take your time. You can always try again.</p>
   </main>
   <script src="api-config.js?v=20261030-amoled-motion"></script>
-  <script src="app.js?v=20261030-question-bank"></script>
+  <script src="app.js?v=20261030-island-settings"></script>
 </body>
 </html>

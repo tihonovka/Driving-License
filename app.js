@@ -27,6 +27,7 @@
   const loginButton = $("loginButton");
   const guestCard = $("guestCard");
   const practicePanel = $("practicePanel");
+  const dynamicIsland = $("dynamicIsland");
 
   function showAuth(status = "") {
     authStatus.textContent = status;
@@ -38,6 +39,7 @@
     practicePanel.hidden = true;
     $("pageNote").hidden = true;
     $("railProgress").hidden = true;
+    dynamicIsland.hidden = true;
     logoutButton.hidden = true;
   }
 
@@ -49,14 +51,15 @@
     score = 0;
     selected = null;
     checked = false;
-    $("scoreCount").textContent = "0";
+    $("islandScoreCount").textContent = "0";
     $("questionCategory").textContent = "";
     $("questionText").textContent = "";
     $("questionIllustration").removeAttribute("src");
     $("questionIllustration").hidden = true;
     $("answers").replaceChildren();
     $("feedback").hidden = true;
-    $("successBurst").hidden = true;
+    $("islandResult").className = "island-result";
+    $("islandResultIcon").textContent = "•";
     $("topicOptions").replaceChildren();
   }
 
@@ -150,6 +153,23 @@
   setTheme(localStorage.getItem("drive-theme") || "dark");
   $("themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
 
+  const defaultGlow = "#956bff";
+  function setGlow(color) {
+    if (!/^#[0-9a-f]{6}$/iu.test(color)) color = defaultGlow;
+    document.documentElement.style.setProperty("--user-glow", color);
+    $("backgroundColor").value = color;
+    localStorage.setItem("drive-background-glow", color);
+  }
+  setGlow(localStorage.getItem("drive-background-glow") || defaultGlow);
+  $("settingsButton").addEventListener("click", () => $("settingsDialog").showModal());
+  $("settingsClose").addEventListener("click", () => $("settingsDialog").close());
+  $("backgroundColor").addEventListener("input", (event) => setGlow(event.currentTarget.value));
+  document.querySelectorAll(".color-swatch").forEach((swatch) => {
+    swatch.style.setProperty("--swatch-color", swatch.dataset.color);
+    swatch.addEventListener("click", () => setGlow(swatch.dataset.color));
+  });
+  $("resetGlow").addEventListener("click", () => setGlow(defaultGlow));
+
   function questionCount(category) { return category === "All topics" ? QUESTION_BANK.length : QUESTION_BANK.filter(q => q.category === category).length; }
   function renderTopicOptions() {
     topicOptions.innerHTML = "";
@@ -163,7 +183,7 @@
         activeCategory = category;
         visibleQuestions = category === "All topics" ? QUESTION_BANK : QUESTION_BANK.filter(q => q.category === category);
         index = 0; score = 0; selected = null; checked = false;
-        $("scoreCount").textContent = "0";
+        $("islandScoreCount").textContent = "0";
         $("topicName").textContent = category;
         closeMenu(); renderTopicOptions(); renderQuestion();
       });
@@ -185,6 +205,9 @@
     $("railProgress").setAttribute("aria-label", `Question ${index + 1} of ${visibleQuestions.length}`);
     $("progressFill").style.width = `${((index + 1) / visibleQuestions.length) * 100}%`;
     $("questionCategory").textContent = question.category;
+    $("progressFill").classList.remove("is-correct", "is-incorrect");
+    $("islandResult").className = "island-result";
+    $("islandResultIcon").textContent = "•";
     $("questionText").textContent = question.question;
     const illustration = $("questionIllustration");
     illustration.hidden = !question.illustration;
@@ -199,7 +222,6 @@
       answers.append(button);
     });
     $("feedback").hidden = true; $("feedback").classList.remove("incorrect");
-    $("successBurst").hidden = true;
     $("sourceLink").hidden = true;
     $("actionLabel").textContent = "Check answer"; actionButton.disabled = true;
   }
@@ -208,7 +230,6 @@
     const question = visibleQuestions[index]; checked = true;
     if (!quizApiUrl) {
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
-      $("successBurst").hidden = true;
       $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Checker unavailable";
       $("feedbackText").textContent = "The answer checker is not connected yet.";
       return;
@@ -231,10 +252,13 @@
       return result;
     }).then((result) => {
       const correct = result.correct === true;
-      if (correct) { score += 1; $("scoreCount").textContent = String(score); }
+      if (correct) { score += 1; $("islandScoreCount").textContent = String(score); }
+      $("progressFill").classList.toggle("is-correct", correct);
+      $("progressFill").classList.toggle("is-incorrect", !correct);
+      $("islandResult").className = "island-result " + (correct ? "is-correct" : "is-incorrect");
+      $("islandResultIcon").textContent = correct ? "✓" : "×";
       [...$("answers").children].forEach((el, i) => { el.disabled = true; if (i === selected) el.classList.add(correct ? "correct" : "incorrect"); });
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.toggle("incorrect", !correct);
-      $("successBurst").hidden = !correct;
       if (!correct) $("answers").children[selected].querySelector(".answer-check").innerHTML = "×";
       $("feedbackIcon").textContent = correct ? "✓" : "!";
       $("feedbackTitle").textContent = correct ? "Correct" : "Not quite";
@@ -256,7 +280,6 @@
       }
       checked = false;
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
-      $("successBurst").hidden = true;
       $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Could not check answer";
       $("feedbackText").textContent = error.status === 429 ? "Too many requests. Please wait a minute and try again." : "Please try again in a moment.";
       [...$("answers").children].forEach((el) => { el.disabled = false; });
@@ -266,7 +289,7 @@
   }
   function advance() {
     if (!checked) { checkAnswer(); return; }
-    if (index === visibleQuestions.length - 1) { startNewQuizSession(); index = 0; score = 0; $("scoreCount").textContent = "0"; }
+    if (index === visibleQuestions.length - 1) { startNewQuizSession(); index = 0; score = 0; $("islandScoreCount").textContent = "0"; }
     else index += 1;
     renderQuestion();
   }
@@ -295,6 +318,7 @@
       practicePanel.hidden = false;
       $("pageNote").hidden = false;
       $("railProgress").hidden = false;
+      dynamicIsland.hidden = false;
       logoutButton.hidden = false;
       return true;
     } catch {
