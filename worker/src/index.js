@@ -206,7 +206,7 @@ async function issueAttempt(request, env) {
 }
 
 async function loadAnswers(env, requestUrl) {
-  const keyBytes = decodeBase64Url(env.ANSWER_KEY);
+  const keyBytes = decodeBase64Url(env.ANSWER_KEY_V2 || env.ANSWER_KEY);
   if (keyBytes.length !== 32) throw new Error("invalid key");
   try {
     const assetUrl = new URL("/answer-bank.enc.json", requestUrl);
@@ -228,7 +228,7 @@ async function loadAnswers(env, requestUrl) {
 }
 
 async function loadQuestions(env, requestUrl) {
-  const keyBytes = decodeBase64Url(env.QUESTION_KEY);
+  const keyBytes = decodeBase64Url(env.QUESTION_KEY_V2 || env.QUESTION_KEY);
   if (keyBytes.length !== 32) throw new Error("invalid key");
   try {
     const assetUrl = new URL("/quiz-questions.enc.json", requestUrl);

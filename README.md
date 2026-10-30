@@ -22,7 +22,7 @@ A kérdések és válaszok természetesen magyarul vannak, hogy a vizsgán ne é
 
 ## ℹ️ Kurva sok kérdés van(majd lesz)
 
-Jelenleg **X darab KRESZ-kérdés** várja, hogy megrepeszd az agyad.
+Jelenleg **100 darab KRESZ-kérdés** várja, hogy megrepeszd az agyad.
 
 Minden kérdéshez tartozik:
 
@@ -33,7 +33,7 @@ Minden kérdéshez tartozik:
 - 🚦 Egyes feladatoknál közlekedési táblák és saját ábrák
 - 💀 Potenciális mentális összeomlás, ha ötödször is elrontod az elsőbbségadást
 
-A kérdésbank az eredeti tanulási jegyzetekből készült, további KRESZ-információk pedig a [hatályos magyar KRESZ jogszabályszövegéből](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm) származnak.
+A bank az eredeti tanulási jegyzetek 18 kérdését és 82 saját megfogalmazású, paragrafushivatkozással ellátott gyakorlókérdést tartalmaz. A kérdések a [hatályos KRESZ-szöveg](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm) alapján készültek; nem hivatalos vizsgakérdések. A B kategóriás tananyaghoz a [KAV hivatalos tantervi és vizsgakövetelményét](https://www.kavk.hu/uploads/2024/dokumentumok/tantervi_es_vizsgakovetelmeny_b_kategoria_20241001_signed.pdf) is használtuk.
 
 > **FUN FACT:** A BMW-ben nyitható a tető, gábor szerint nem
 
@@ -54,8 +54,8 @@ A projekt **AES-256-GCM titkosítást** használ két különálló, titkosítot
 
 A visszafejtéshez szükséges kulcsok:
 
-- `QUESTION_KEY`
-- `ANSWER_KEY`
+- `QUESTION_KEY_V2`
+- `ANSWER_KEY_V2`
 
 Ezek kizárólag a **Cloudflare Worker titkos környezeti változóiban** élnek.
 

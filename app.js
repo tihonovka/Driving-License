@@ -238,8 +238,11 @@
       if (!correct) $("answers").children[selected].querySelector(".answer-check").innerHTML = "×";
       $("feedbackIcon").textContent = correct ? "✓" : "!";
       $("feedbackTitle").textContent = correct ? "Correct" : "Not quite";
-      $("feedbackText").textContent = "Keep practicing the Hungarian road rules.";
-      $("sourceLink").hidden = true;
+      $("feedbackText").textContent = question.explanation || "Keep practicing the Hungarian road rules.";
+      const sourceLink = $("sourceLink");
+      sourceLink.href = question.source || "";
+      sourceLink.textContent = question.sourceLabel || "KRESZ source ↗";
+      sourceLink.hidden = !question.source;
       $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
       actionButton.disabled = false;
     }).catch((error) => {
