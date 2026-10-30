@@ -9,6 +9,14 @@
       { "name": "ATTEMPT_GUARD", "class_name": "AttemptGuard" }
     ]
   },
+  "d1_databases": [
+    {
+      "binding": "AUTH_DB",
+      "database_name": "driving-license-auth",
+      "database_id": "8e50b2e5-3e9b-40e2-af86-a718895e6d4e",
+      "migrations_dir": "./migrations"
+    }
+  ],
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["AttemptGuard"] }
   ],

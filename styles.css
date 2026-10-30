@@ -50,6 +50,25 @@ body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity
 .ambient-two { width:380px;height:380px;background:#d74a9b;bottom:-220px;right:5%;opacity:.2; }
 html[data-theme="light"] .ambient { opacity:.23; }
 .glass { background:var(--glass); border:1px solid var(--glass-edge); box-shadow:var(--shadow),inset 0 1px 0 var(--glass-highlight); backdrop-filter:blur(34px) saturate(175%); -webkit-backdrop-filter:blur(34px) saturate(175%); }
+.auth-dialog { width:min(410px,calc(100vw - 32px));padding:30px;border-radius:26px;color:var(--text); }
+.auth-dialog::backdrop { background:rgba(8,6,16,.62);backdrop-filter:blur(12px); }
+.auth-eyebrow { display:flex;align-items:center;gap:8px;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:1.7px; }
+.auth-dialog h2 { margin:18px 0 7px;font-size:25px; }
+.auth-description { margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.5; }
+.auth-dialog form { display:grid;gap:9px; }
+.auth-dialog label { color:var(--muted);font-size:11px;font-weight:600; }
+.auth-dialog input { width:100%;padding:12px 13px;border:1px solid var(--glass-edge);border-radius:12px;background:rgba(255,255,255,.07);color:var(--text);font:500 14px "DM Sans",sans-serif;outline:none; }
+.auth-dialog input:focus { border-color:var(--lavender);box-shadow:0 0 0 3px color-mix(in srgb,var(--lavender) 20%,transparent); }
+.auth-dialog input:-webkit-autofill { -webkit-text-fill-color:var(--text);box-shadow:0 0 0 1000px var(--bg-2) inset; }
+.auth-submit { width:100%;margin-top:7px; }
+.auth-status { min-height:17px;margin:3px 0 0;color:var(--error);font-size:11px;line-height:1.45; }
+.auth-switch { width:100%;margin-top:15px;padding:8px;border:0;background:transparent;color:var(--lavender);font:600 12px "DM Sans",sans-serif;cursor:pointer; }
+.auth-switch:hover { text-decoration:underline; }
+.invite-field { display:grid;gap:9px; }
+.logout-button { width:43px;height:43px;margin-bottom:10px;border-radius:15px;display:grid;place-items:center;transition:transform .2s,background .25s; }
+.logout-button:hover { transform:translateY(-2px);background:var(--answer-hover); }
+.logout-button svg { width:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round; }
+.logout-button[hidden] { display:none; }
 .rail { position:fixed; z-index:5; left:26px; top:50%; transform:translateY(-50%); width:72px; min-height:405px; border-radius:26px; display:flex; flex-direction:column; align-items:center; padding:13px 9px; overflow:hidden; }
 .rail::before,.practice::before { content:""; position:absolute; pointer-events:none; top:0;left:10%;width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--glass-highlight),transparent); }
 .brand-mark { width:49px;height:49px;border-radius:18px; display:grid;place-items:center; background:linear-gradient(145deg,rgba(210,185,255,.3),rgba(255,147,207,.16)); border:1px solid rgba(255,255,255,.28); box-shadow:inset 0 1px 1px rgba(255,255,255,.38),0 5px 18px rgba(126,83,195,.2); }
@@ -139,6 +158,7 @@ h2 { margin:0;max-width:610px;font-family:Manrope,sans-serif;font-size:clamp(20p
   .rail { left:50%;top:auto;bottom:13px;transform:translateX(-50%);width:auto;min-height:0;height:58px;flex-direction:row;gap:12px;padding:7px 10px;border-radius:20px; }
   .brand-mark { width:41px;height:41px;border-radius:14px; }.brand-mark svg{width:24px}.rail-spacer{width:1px;height:27px;flex:0 0 1px;background:var(--glass-edge)}
   .rail-caption{writing-mode:initial;transform:none;margin:0 5px 0 1px;font-size:7px;letter-spacing:1.2px}.theme-toggle{width:40px;height:40px;border-radius:13px}
+  .logout-button { width:40px;height:40px;margin:0;border-radius:13px; }
   .page-shell { width:calc(100% - 32px);padding:37px 0 102px; }.page-heading{margin-bottom:26px}h1{font-size:40px;letter-spacing:-2px}.subtitle{font-size:13px}
   .practice{padding:20px 17px 17px;border-radius:25px}.practice::after{border-radius:24px}.practice-topline{gap:8px}.topic-trigger{min-width:0;width:179px}.progress-word{display:none}.progress-meta{font-size:11px}
   .progress-track{margin:14px 0 23px}h2{font-size:21px}.answer-option{min-height:54px;padding:10px 11px;font-size:13px}.practice-footer{margin-top:19px;padding-top:15px}.primary-button{min-width:138px;padding:12px}.topic-menu{width:min(248px,calc(100vw - 52px))}

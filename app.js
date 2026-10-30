@@ -12,6 +12,85 @@
   let quizSessionId = sessionStorage.getItem("drive-quiz-session") || crypto.randomUUID();
   sessionStorage.setItem("drive-quiz-session", quizSessionId);
   const quizApiUrl = window.QUIZ_API_URL || "";
+  const apiBase = quizApiUrl.replace(/\/$/u, "");
+  let authToken = sessionStorage.getItem("drive-auth-token") || "";
+  let authMode = "login";
+
+  const authDialog = $("authDialog");
+  const authForm = $("authForm");
+  const authSwitch = $("authSwitch");
+  const authStatus = $("authStatus");
+  const inviteField = $("inviteField");
+  const authSubmit = $("authSubmit");
+  const logoutButton = $("logoutButton");
+
+  function showAuth(status = "") {
+    authStatus.textContent = status;
+    if (!authDialog.open) authDialog.showModal();
+  }
+
+  function setAuthMode(mode) {
+    authMode = mode;
+    const registering = mode === "register";
+    $("authTitle").textContent = registering ? "Create your account" : "Welcome back";
+    $("authDescription").textContent = registering ? "Enter your invite code to create an account." : "Sign in to continue your Hungarian theory practice.";
+    $("authPassword").autocomplete = registering ? "new-password" : "current-password";
+    $("authPassword").minLength = 12;
+    inviteField.hidden = !registering;
+    $("authInvite").required = registering;
+    authSubmit.textContent = registering ? "Create account" : "Sign in";
+    authSwitch.textContent = registering ? "Already have an account? Sign in" : "Need an account? Create one";
+    authStatus.textContent = "";
+  }
+
+  authSwitch.addEventListener("click", () => setAuthMode(authMode === "login" ? "register" : "login"));
+  authDialog.addEventListener("cancel", (event) => { if (!authToken) event.preventDefault(); });
+  authForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!apiBase) { showAuth("Sign in is not connected yet."); return; }
+    authSubmit.disabled = true;
+    authStatus.textContent = "Connecting…";
+    const form = new FormData(authForm);
+    const payload = {
+      username: form.get("username"),
+      password: form.get("password")
+    };
+    if (authMode === "register") payload.inviteCode = form.get("inviteCode");
+    try {
+      const response = await fetch(`${apiBase}/api/auth/${authMode}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not sign in.");
+      authToken = result.token;
+      sessionStorage.setItem("drive-auth-token", authToken);
+      logoutButton.hidden = false;
+      authDialog.close();
+      authForm.reset();
+      setAuthMode("login");
+      await loadQuiz();
+    } catch (error) {
+      authStatus.textContent = error.message || "Could not reach the sign-in service.";
+    } finally {
+      authSubmit.disabled = false;
+    }
+  });
+
+  logoutButton.addEventListener("click", async () => {
+    try {
+      if (authToken && apiBase) await fetch(`${apiBase}/api/auth/logout`, { method: "POST", headers: { Authorization: `Bearer ${authToken}` } });
+    } finally {
+      authToken = "";
+      sessionStorage.removeItem("drive-auth-token");
+      logoutButton.hidden = true;
+      showAuth();
+    }
+  });
+
+  if (!authToken) showAuth();
+  else logoutButton.hidden = false;
 
   function startNewQuizSession() {
     quizSessionId = crypto.randomUUID();
@@ -94,16 +173,15 @@
     }
     actionButton.disabled = true;
     [...$("answers").children].forEach((el) => { el.disabled = true; });
-    const apiBase = quizApiUrl.replace(/\/$/u, "");
     fetch(`${apiBase}/api/attempt`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${authToken}` },
       body: JSON.stringify({ questionId: question.id, sessionId: quizSessionId })
     }).then(async (response) => {
       const attempt = await response.json();
       if (!response.ok) { const error = new Error("Attempt unavailable"); error.status = response.status; throw error; }
       return attempt;
     }).then(({ attemptToken }) => fetch(`${apiBase}/api/check`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${authToken}` },
       body: JSON.stringify({ questionId: question.id, selectedIndex: selected, attemptToken, sessionId: quizSessionId })
     })).then(async (response) => {
       const result = await response.json();
@@ -121,6 +199,13 @@
       $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
       actionButton.disabled = false;
     }).catch((error) => {
+      if (error.status === 401) {
+        authToken = "";
+        sessionStorage.removeItem("drive-auth-token");
+        logoutButton.hidden = true;
+        showAuth("Your session ended. Sign in again.");
+        return;
+      }
       if (error.status === 409) {
         checked = true;
         [...$("answers").children].forEach((el) => { el.disabled = true; });
@@ -147,21 +232,32 @@
     renderQuestion();
   }
   actionButton.addEventListener("click", advance);
-  fetch(`${quizApiUrl.replace(/\/$/u, "")}/api/questions`, { headers: { Accept: "application/json" } })
-    .then((response) => { if (!response.ok) throw new Error("Question request failed"); return response.json(); })
-    .then((result) => {
+  async function loadQuiz() {
+    if (!authToken || !apiBase) return;
+    try {
+      const response = await fetch(`${apiBase}/api/questions`, { headers: { Accept: "application/json", Authorization: `Bearer ${authToken}` } });
+      if (response.status === 401) {
+        authToken = "";
+        sessionStorage.removeItem("drive-auth-token");
+        logoutButton.hidden = true;
+        showAuth("Your session ended. Sign in again.");
+        return;
+      }
+      if (!response.ok) throw new Error("Question request failed");
+      const result = await response.json();
       if (!Array.isArray(result.questions) || !result.questions.length) throw new Error("Invalid question bank");
       QUESTION_BANK = result.questions;
       categories = ["All topics", ...new Set(QUESTION_BANK.map((question) => question.category))];
       visibleQuestions = QUESTION_BANK;
       renderTopicOptions();
       renderQuestion();
-    })
-    .catch(() => {
+    } catch {
       $("questionCategory").textContent = "Unavailable";
       $("questionText").textContent = "Questions could not be loaded. Please refresh in a moment.";
       $("questionIllustration").hidden = true;
       $("actionLabel").textContent = "Unavailable";
       actionButton.disabled = true;
-    });
+    }
+  }
+  loadQuiz();
 })();
