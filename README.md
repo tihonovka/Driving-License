@@ -1,5 +1,5 @@
-# 🦂 I DRIVE.
-### Hungarian KRESZ Practice Simulator
+# ℹ️ I DRIVE.
+### Hungarian KRESZ Repesztés Simulator
 **Literally me. Literally driving. Literally failing the right-hand rule.**
 
 ![Ryan Gosling vezet a Drive (2011) című filmben](https://images.cinefil.com/movies/550784.webp)
@@ -10,9 +10,7 @@
 
 ---
 
-## 🚗 MI A FASZOM EZ?
-
-Üdvözöllek az **I DRIVE** világában, ahol Ryan Gosling vezet, te meg próbálod megfejteni, hogy a jobbkéz-szabály szerint mi a jó büdös franc történik egy kereszteződésben.
+## ℹ️ Kicsoda vagyok????
 
 Ez egy könnyű, gyors, statikus **magyar KRESZ-gyakorló weboldal**, amely GitHub Pages-en is működik.
 
@@ -20,13 +18,11 @@ Az oldal kezelőfelülete angol, mert nemzetközi színvonalon szeretnénk elbuk
 
 A kérdések és válaszok természetesen magyarul vannak, hogy a vizsgán ne érjen meglepetés.
 
-**Küldetés:** megszerezni a jogosítványt, mielőtt Gábor megtanulna indexelni.
-
 ---
 
-## 🧠 THE GOSLING KNOWLEDGE BASE
+## ℹ️ THE GOSLING KNOWLEDGE BASE
 
-Jelenleg **18 darab KRESZ-kérdés** várja, hogy megdolgoztasd az agyad.
+Jelenleg **x darab KRESZ-kérdés** várja, hogy megdolgoztasd az agyad.
 
 Minden kérdéshez tartozik:
 
@@ -39,15 +35,15 @@ Minden kérdéshez tartozik:
 
 A kérdésbank az eredeti tanulási jegyzetekből készült, további KRESZ-információk pedig a [hatályos magyar KRESZ jogszabályszövegéből](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm) származnak.
 
-> **FUN FACT:** A BMW-ben is van index. Gábor állítólag még kutatja, hol.
+> **FUN FACT:** A BMW-ben nyitható a tető, gábor szerint nem
 
 ---
 
-## 🔐 THE SECRET GOSLING TECHNOLOGY
+## 🔐 LCrypt397
 
 ### AES-256-GCM Encryption
 
-Itt a válaszokat nem osztogatjuk úgy, mint a szórólapokat a Blahán, bazdmeg.
+Itt a válaszokat nem osztogatjuk úgy, mint a szórólapokat a Blahán.
 
 A projekt **AES-256-GCM titkosítást** használ két különálló, titkosított adatállománnyal.
 
@@ -73,15 +69,15 @@ vagy
 
 `{ "correct": false }`
 
-**Ennyi, pici.** Nem küldi vissza a helyes válasz indexét.
+**Ennyi, picur.** Nem küldi vissza a helyes válasz indexét.
 
 ---
 
-## 🕶️ NO ACCOUNT, NO DRIVE
+## ℹ️ Login Database
 
 ### Authentication System
 
-Mielőtt beszállnál Gosling mellé a volánhoz, be kell jelentkezned.
+Mielőtt beszállnál gabi mellé a volánhoz, be kell jelentkezned.
 
 A felhasználói rendszer **Cloudflare D1 adatbázison** működik.
 
@@ -99,11 +95,11 @@ A jelszavakat a rendszer **nem tárolja olvasható szövegként**.
 
 Új fiókot pedig csak a `REGISTRATION_CODE` birtokában lehet létrehozni.
 
-> **ACCESS DENIED:** Gábor megpróbált belépni a kenyérpirító jelszavával.
+> **ACCESS DENIED:** Gábor megpróbált megrepeszteni a kenyérpirító jelszavával.
 
 ---
 
-## 🎯 ONE QUESTION. ONE SHOT.
+## ℹ️ Kernel Level Protection (NIncs semmi csak jol hangzik)
 
 ### Anti-Cheating System
 
@@ -129,7 +125,7 @@ A DevTools-ablak lefagyasztása nem biztonság, hanem egy technológiai hasgörc
 
 ---
 
-## 👑 THE GOSLING ADMIN CLUB
+## ℹ️ Admin Endpoint
 
 ### Owner-Only Answer Access
 
@@ -153,7 +149,7 @@ Az `ADMIN_KEY` kizárólag Cloudflare Worker secret lehet. A frontendben és a G
 
 ---
 
-## 🚦 THE ROAD SIGN COLLECTION
+## ℹ️ THE ROAD SIGN COLLECTION
 
 Nem lenne igazi KRESZ-teszt néhány tábla nélkül, amitől az ember elfelejti, merre van az előre.
 
@@ -174,7 +170,7 @@ Ezért a rendszer saját SVG-ábrákat alkalmaz azokhoz a kérdésekhez, amelyek
 
 ---
 
-## 🏎️ THE TECHNOLOGY UNDER THE HOOD
+## ℹ️ THE TECHNOLOGY UNDER THE HOOD
 
 | Technológia | Feladat |
 |---|---|
@@ -186,15 +182,13 @@ Ezért a rendszer saját SVG-ábrákat alkalmaz azokhoz a kérdésekhez, amelyek
 | PBKDF2-SHA-256 | Jelszavak védelme |
 | SVG | Közlekedési ábrák |
 
-Nincs bonyolult frontend buildfolyamat.
+Nincs bonyolult frontend bullshit.
 
 Nincs hárommillió felesleges JavaScript-csomag.
 
-Csak a vezetés, a KRESZ és az egzisztenciális válság egy egyenrangú útkereszteződésben.
-
 ---
 
-## 🧪 TESTED, NOT GABOR APPROVED
+## ℹ️ TESTED, NOT GABOR APPROVED
 
 Az automatizált tesztek ellenőrzik:
 
@@ -210,27 +204,23 @@ Mert ha egyetlen rossz válasz képes lenne feltörni az egész rendszert, akkor
 
 ---
 
-## 🌃 FINAL DESTINATION
+## ℹ️ TRIPPING POINT
 
 **The city is yours. The road is yours. The right of way probably isn't.**
 
-Ez a projekt azoknak készült, akik szeretnék megtanulni a magyar közlekedési szabályokat anélkül, hogy harminc különböző weboldalon keresnék ugyanazt a kérdést.
-
-Tanulj. Gyakorolj. Hibázz. Próbáld újra.
+Ez a projekt azoknak készült, akik szeretnék megtanulni a magyar közlekedési szabályokat anélkül, hogy harminc különböző weboldalon keresnék ugyanazt a kérdést. És Englert Ervin kedvére!
 
 És ha már mindent tudsz, irány a valódi forgalom, természetesen oktatóval és a megfelelő jogosultságokkal.
 
-### 🦂 I DRIVE.
+### ℹ️ I DRIVE.
 
 **You study.**
 
-**Gábor fails.**
+**Gábor repesztve.**
 
-**Ryan Gosling approves. (Nem hivatalosan, bazdmeg.)**
+**Ryan Gosling approves. (Nem hivatalosan, asszem.)**
 
 ---
-
-*Made for future drivers, professional overthinkers, and people who genuinely believe they're Ryan Gosling.*
 
 **© 2026 I DRIVE | Hungarian Driving Theory Practice**
 
