@@ -221,6 +221,60 @@ Ez a projekt azoknak készült, akik szeretnék megtanulni a magyar közlekedés
 **Ryan Gosling approves. (Nem hivatalosan, asszem.)**
 
 ---
+# 🧠 I DRIVE. | FOGALOMTÁR
+### For people running on 2 brain cells. 🦂
+
+> **„Nem értem, de legalább titkosítva van.”**
+>
+> Gábor, Senior Cybersecurity Specialist (önjelölt).
+
+---
+
+## 📚 Ezeket hasznalok asszem?
+
+| Fogalom | Mit jelent, nincsen közöd? | Wiki |
+|---|---|---|
+| **AES-256** 🔐 | Titkosítási módszer 256 bites kulccsal. Nem, Gábor, nem 256 jelszót kell beírni. | [Wikipedia](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
+| **GCM** 🛡️ | Titkosítási üzemmód, ami az adatok módosítását is képes észlelni. | [Wikipedia](https://en.wikipedia.org/wiki/Galois/Counter_Mode) |
+| **API** 🌐 | Két program egymással kommunikál. Mint amikor megkérdezed Gabit, hogy „mivan?”, és ő válaszol. | [Wikipedia](https://en.wikipedia.org/wiki/API) |
+| **Frontend** 🖥️ | Amit a weboldalon látsz és nyomkodsz. A szép része az egész szarnak. | [Wikipedia](https://en.wikipedia.org/wiki/Front-end_web_development) |
+| **Backend** ⚙️ | A háttérben dolgozó rendszer. Az agy, amit Gábor még keres. | [Wikipedia](https://en.wikipedia.org/wiki/Frontend_and_backend) |
+| **Cloudflare Workers** ☁️ | Felhőben futó szerveroldali kód. Nem kell saját szervert etetgetni. | [Wikipedia: Serverless](https://en.wikipedia.org/wiki/Serverless_computing) |
+| **Cloudflare D1** 🗃️ | Cloudflare-féle, SQLite-alapú adatbázis. Felhasználók és munkamenetek laknak benne. | [Wikipedia: SQLite](https://en.wikipedia.org/wiki/SQLite) |
+| **PBKDF2** 🔑 | Jelszóalapú kulcsszármaztatás. Megnehezíti a jelszavak kitalálását a tárolt adatokból. | [Wikipedia](https://en.wikipedia.org/wiki/PBKDF2) |
+| **Hash** 🥔 | Adatból számított digitális lenyomat. Nem ugyanaz, mint a titkosítás, haver. | [Wikipedia](https://en.wikipedia.org/wiki/Cryptographic_hash_function) |
+| **Bearer Token** 🎫 | Titkos belépő, amivel a szerver azonosítani tud egy munkamenetet. Aki megszerzi, visszaélhet vele. | [Wikipedia: Access Token](https://en.wikipedia.org/wiki/Access_token) |
+| **Session** ⏳ | Bejelentkezési munkamenet. Nálunk maximum 7 napig érvényes. | [Wikipedia](https://en.wikipedia.org/wiki/Session_(computer_science)) |
+| **Endpoint** 🚪 | Egy konkrét API-útvonal, ahol valamilyen kérést fogad a szerver. | [Wikipedia: Web API](https://en.wikipedia.org/wiki/Web_API) |
+| **SVG** 🚦 | Vektoros képformátum. Nagyíthatod, nem lesz belőle Minecraft. | [Wikipedia](https://en.wikipedia.org/wiki/SVG) |
+| **GitHub Pages** 📄 | Statikus weboldalak publikálására szolgáló GitHub-szolgáltatás. | [Wikipedia: GitHub](https://en.wikipedia.org/wiki/GitHub) |
+| **HTTP 401** 💀 | Nincs érvényes hitelesítésed. Magyarul: Gábor, ide nem jössz be. | [Wikipedia: HTTP 401](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#401) |
+
+---
+
+## 🎓 EXTRA FOGALMAK, MERT A FASZOMAT MÁR MEGINT
+
+**Encryption (titkosítás):** Az adatokat kulccsal olvashatatlan formára alakítjuk. A megfelelő kulccsal visszafejthetők. [📖 Wiki](https://en.wikipedia.org/wiki/Encryption)
+
+**Decryption (visszafejtés):** A titkosított adatból ismét értelmezhető adatot készítünk a megfelelő kulccsal. [📖 Wiki](https://en.wikipedia.org/wiki/Decryption)
+
+**Rate Limit:** Korlát arra, hogy mennyi kérést küldhetsz adott idő alatt. Nálunk nincs percenkénti ellenőrzési limit. [📖 Wiki](https://en.wikipedia.org/wiki/Rate_limiting)
+
+**One-Time Token:** Egyszer használható azonosító. A kérdés ellenőrzése után nem használhatod újra ugyanabban a körben. [📖 Wiki: One-time password](https://en.wikipedia.org/wiki/One-time_password)
+
+**JSON:** Szöveges adatformátum, amiben a programok strukturált adatokat adnak át egymásnak. [📖 Wiki](https://en.wikipedia.org/wiki/JSON)
+
+---
+
+### Finita la comedia
+
+> **„If you understand the documentation, you can drive the code.”**
+>
+> Ryan Gosling ezt nem mondta, de kurva jól hangzik.
+
+**Knowledge is power. Encryption is protection. Gábor is still loading...**
+
+*I DRIVE. © 2026 | A technikai fogalmakat emberi nyelvre fordítottuk.*
 
 **© 2026 I DRIVE | Hungarian Driving Theory Practice**
 
