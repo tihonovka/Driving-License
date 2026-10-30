@@ -19,15 +19,47 @@
   const authDialog = $("authDialog");
   const authForm = $("authForm");
   const authSwitch = $("authSwitch");
+  const authClose = $("authClose");
   const authStatus = $("authStatus");
   const inviteField = $("inviteField");
   const authSubmit = $("authSubmit");
   const logoutButton = $("logoutButton");
+  const loginButton = $("loginButton");
+  const guestCard = $("guestCard");
+  const practicePanel = $("practicePanel");
 
   function showAuth(status = "") {
     authStatus.textContent = status;
     if (!authDialog.open) authDialog.showModal();
   }
+
+  function showSignedOut() {
+    guestCard.hidden = false;
+    practicePanel.hidden = true;
+    $("pageNote").hidden = true;
+    logoutButton.hidden = true;
+  }
+
+  function clearQuiz() {
+    QUESTION_BANK = [];
+    visibleQuestions = [];
+    categories = ["All topics"];
+    index = 0;
+    score = 0;
+    selected = null;
+    checked = false;
+    $("scoreCount").textContent = "0";
+    $("questionCategory").textContent = "";
+    $("questionText").textContent = "";
+    $("questionIllustration").removeAttribute("src");
+    $("questionIllustration").hidden = true;
+    $("answers").replaceChildren();
+    $("feedback").hidden = true;
+    $("topicOptions").replaceChildren();
+  }
+
+  loginButton.addEventListener("click", () => showAuth());
+  authClose.addEventListener("click", () => authDialog.close());
 
   function setAuthMode(mode) {
     authMode = mode;
@@ -70,7 +102,11 @@
       authDialog.close();
       authForm.reset();
       setAuthMode("login");
-      await loadQuiz();
+      const loaded = await loadQuiz();
+      if (!loaded) {
+        authStatus.textContent = "Your account was verified, but the quiz could not load. Please try again.";
+        showSignedOut();
+      }
     } catch (error) {
       authStatus.textContent = error.message || "Could not reach the sign-in service.";
     } finally {
@@ -84,13 +120,14 @@
     } finally {
       authToken = "";
       sessionStorage.removeItem("drive-auth-token");
-      logoutButton.hidden = true;
-      showAuth();
+      clearQuiz();
+      showSignedOut();
+      authDialog.close();
     }
   });
 
-  if (!authToken) showAuth();
-  else logoutButton.hidden = false;
+  showSignedOut();
+  if (authToken) logoutButton.hidden = false;
 
   function startNewQuizSession() {
     quizSessionId = crypto.randomUUID();
@@ -202,8 +239,9 @@
       if (error.status === 401) {
         authToken = "";
         sessionStorage.removeItem("drive-auth-token");
-        logoutButton.hidden = true;
-        showAuth("Your session ended. Sign in again.");
+        clearQuiz();
+        showSignedOut();
+        guestCard.querySelector(".guest-footnote").textContent = "Your session ended. Sign in to continue.";
         return;
       }
       if (error.status === 409) {
@@ -233,15 +271,16 @@
   }
   actionButton.addEventListener("click", advance);
   async function loadQuiz() {
-    if (!authToken || !apiBase) return;
+    if (!authToken || !apiBase) return false;
     try {
       const response = await fetch(`${apiBase}/api/questions`, { headers: { Accept: "application/json", Authorization: `Bearer ${authToken}` } });
       if (response.status === 401) {
         authToken = "";
         sessionStorage.removeItem("drive-auth-token");
-        logoutButton.hidden = true;
-        showAuth("Your session ended. Sign in again.");
-        return;
+        clearQuiz();
+        showSignedOut();
+        guestCard.querySelector(".guest-footnote").textContent = "Your session ended. Sign in to continue.";
+        return false;
       }
       if (!response.ok) throw new Error("Question request failed");
       const result = await response.json();
@@ -251,12 +290,16 @@
       visibleQuestions = QUESTION_BANK;
       renderTopicOptions();
       renderQuestion();
+      guestCard.hidden = true;
+      practicePanel.hidden = false;
+      $("pageNote").hidden = false;
+      logoutButton.hidden = false;
+      return true;
     } catch {
-      $("questionCategory").textContent = "Unavailable";
-      $("questionText").textContent = "Questions could not be loaded. Please refresh in a moment.";
-      $("questionIllustration").hidden = true;
-      $("actionLabel").textContent = "Unavailable";
-      actionButton.disabled = true;
+      clearQuiz();
+      showSignedOut();
+      guestCard.querySelector(".guest-footnote").textContent = "The quiz is unavailable right now. Please try signing in again shortly.";
+      return false;
     }
   }
   loadQuiz();
