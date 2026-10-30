@@ -4,4 +4,6 @@
 /pnpm-workspace.yaml
 /worker/.dev.vars
 /worker/.answer-key.local
+/worker/.question-key.local
 /worker/answer-bank.source.local.json
+/worker/question-bank.source.local.json

@@ -16,17 +16,17 @@ The initial question bank is derived from the user's local notes. All 18 prompts
 
 ## Private answer checker
 
-The GitHub Pages client contains question prompts and choices only. Correct indexes are stored in `worker/public/answer-bank.enc.json`, encrypted with AES-256-GCM. The random 256-bit key is a Cloudflare Worker secret named `ANSWER_KEY`; Cloudflare protects the secret at rest, and it is never sent to browsers or included in the repository. The Worker decrypts the bank for comparison and returns only `{ "correct": true|false }`.
+Question text and choices are stored in `worker/public/quiz-questions.enc.json`, encrypted with AES-256-GCM. Correct indexes are in the separate encrypted `worker/public/answer-bank.enc.json`. The decryption keys are Cloudflare Worker secrets named `QUESTION_KEY` and `ANSWER_KEY`; they are not included in Git or sent to browsers. The Worker returns question text and choices for display, and only `{ "correct": true|false }` for answer checks.
 
-The intended checker URL is `https://driving-license-answer-checker.driving-license-practice.workers.dev`. To update the answer bank, prepare an ignored local JSON file mapping each question ID to its correct index, generate a fresh key, and encrypt the bank:
+The intended checker URL is `https://driving-license-answer-checker.driving-license-practice.workers.dev`. To update the question bank, prepare an ignored local JSON array containing the question text and choices, generate a fresh key, and encrypt it:
 
-1. Run `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Content -NoNewline worker/.answer-key.local`.
-2. Run `node worker/scripts/encrypt-answer-bank.mjs path/to/private-answer-source.json`.
-3. Run `pnpm worker:deploy`, then `Get-Content -Raw worker/.answer-key.local | pnpm dlx wrangler secret put ANSWER_KEY --config worker/wrangler.jsonc`.
-4. Delete the local key with `Remove-Item -LiteralPath worker/.answer-key.local` after Cloudflare accepts it.
+1. Run `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Content -NoNewline worker/.question-key.local`.
+2. Run `node worker/scripts/encrypt-question-bank.mjs path/to/private-question-source.json`.
+3. Run `pnpm worker:deploy`, then `Get-Content -Raw worker/.question-key.local | pnpm dlx wrangler secret put QUESTION_KEY --config worker/wrangler.jsonc`.
+4. Delete the local key with `Remove-Item -LiteralPath worker/.question-key.local` after Cloudflare accepts it.
 
-Never commit the local key or private answer source. Run `pnpm test` to verify correct/wrong checks, tamper rejection, and origin/input validation.
+Never commit local keys or private source files. Run `pnpm test` to verify correct/wrong checks, tamper rejection, and origin/input validation.
 
-The browser receives no correct index or answer key. The checker returns only whether a submitted choice is correct.
+Question prompts and choices are necessarily readable in the browser while displayed. Correct indexes and both decryption keys remain server-side; the checker returns only whether a submitted choice is correct. A debugger loop cannot prevent DevTools inspection and would freeze the quiz.
 
 The external `kreszteszt.net/tablak/` catalogue has four general-purpose SVG icons; its individual road-sign illustrations are JPEGs. This project uses original, locally drawn SVG diagrams for the quiz questions that benefit from a sign illustration.

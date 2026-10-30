@@ -1,6 +1,7 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const categories = ["All topics", ...new Set(QUESTION_BANK.map((q) => q.category))];
+  let QUESTION_BANK = [];
+  let categories = ["All topics"];
   let activeCategory = "All topics";
   let visibleQuestions = QUESTION_BANK;
   let index = 0;
@@ -116,5 +117,21 @@
     renderQuestion();
   }
   actionButton.addEventListener("click", advance);
-  renderTopicOptions(); renderQuestion();
+  fetch(`${quizApiUrl.replace(/\/$/u, "")}/api/questions`, { headers: { Accept: "application/json" } })
+    .then((response) => { if (!response.ok) throw new Error("Question request failed"); return response.json(); })
+    .then((result) => {
+      if (!Array.isArray(result.questions) || !result.questions.length) throw new Error("Invalid question bank");
+      QUESTION_BANK = result.questions;
+      categories = ["All topics", ...new Set(QUESTION_BANK.map((question) => question.category))];
+      visibleQuestions = QUESTION_BANK;
+      renderTopicOptions();
+      renderQuestion();
+    })
+    .catch(() => {
+      $("questionCategory").textContent = "Unavailable";
+      $("questionText").textContent = "Questions could not be loaded. Please refresh in a moment.";
+      $("questionIllustration").hidden = true;
+      $("actionLabel").textContent = "Unavailable";
+      actionButton.disabled = true;
+    });
 })();
