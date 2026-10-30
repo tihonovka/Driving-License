@@ -48,7 +48,7 @@ export class AttemptGuard {
           }
           if (recent.length >= RATE_LIMIT_PER_MINUTE) {
             await txn.put(rateKey, recent);
-            return { status: 429, body: { error: "rate_limited" } };
+            return { status: 429, body: { error: "anyadat_tord_fel_hulyegyerek" } };
           }
           recent.push(now);
           await txn.put(rateKey, recent);
@@ -60,7 +60,7 @@ export class AttemptGuard {
         }
         if (recent.length >= RATE_LIMIT_PER_MINUTE) {
           await txn.put(rateKey, recent);
-          return { status: 429, body: { error: "rate_limited" } };
+          return { status: 429, body: { error: "anyadat_tord_fel_hulyegyerek" } };
         }
         recent.push(now);
         await txn.put(rateKey, recent);
