@@ -57,6 +57,9 @@
     $("progressFill").style.width = `${((index + 1) / visibleQuestions.length) * 100}%`;
     $("questionCategory").textContent = question.category;
     $("questionText").textContent = question.question;
+    const illustration = $("questionIllustration");
+    illustration.hidden = !question.illustration;
+    if (question.illustration) { illustration.src = question.illustration; illustration.alt = question.illustrationAlt || ""; }
     const answers = $("answers"); answers.innerHTML = "";
     question.options.forEach((answer, answerIndex) => {
       const button = document.createElement("button");

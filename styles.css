@@ -98,6 +98,9 @@ h1 span { background:linear-gradient(100deg,var(--lavender) 8%,#d6adff 48%,var(-
 .question-area { position:relative;z-index:1; }
 .question-kicker { margin-bottom:11px;color:var(--lavender);font-size:10px;font-weight:700;letter-spacing:1.65px;text-transform:uppercase; }
 h2 { margin:0;max-width:610px;font-family:Manrope,sans-serif;font-size:clamp(20px,3vw,25px);line-height:1.43;letter-spacing:-.45px;font-weight:600; }
+.question-illustration { display:block;width:116px;height:116px;object-fit:contain;margin:17px 0 4px;padding:5px;border:1px solid var(--glass-edge);border-radius:23px;background:rgba(255,255,255,.045);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 12px 32px rgba(11,8,23,.13);animation:illustration-in .38s cubic-bezier(.2,.8,.2,1) both; }
+.question-illustration[hidden] { display:none; }
+@keyframes illustration-in { from { opacity:0;transform:translateY(7px) scale(.96); } to { opacity:1;transform:translateY(0) scale(1); } }
 .choose-hint { margin:17px 0 10px;color:var(--quiet);font-size:11px; }
 .answers { display:grid;gap:9px; }
 .answer-option { position:relative;width:100%;display:flex;align-items:center;gap:13px;min-height:55px;padding:11px 15px;border-radius:16px;border:1px solid rgba(255,255,255,.11);background:var(--answer);color:var(--text);font:500 14px "DM Sans",sans-serif;text-align:left;cursor:pointer;transition:transform .2s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s,box-shadow .2s; }

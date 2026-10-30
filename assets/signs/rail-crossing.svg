@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">Single track railway crossing sign</title><desc id="desc">A red and white crossbuck above a single railway track.</desc>
+  <circle cx="90" cy="90" r="86" fill="#f5f1ff"/><path d="M90 143V52" stroke="#8d8b97" stroke-width="8" stroke-linecap="round"/>
+  <g transform="rotate(-45 90 76)"><rect x="49" y="66" width="82" height="20" rx="4" fill="#fff" stroke="#d94d66" stroke-width="5"/><path d="M59 67v18m20-18v18m20-18v18m20-18v18" stroke="#d94d66" stroke-width="7"/></g>
+  <path d="M62 151h56M70 142v18m40-18v18" stroke="#6f6b7a" stroke-width="5" stroke-linecap="round"/>
+</svg>

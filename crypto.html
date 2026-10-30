@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0a14"><title>LCrypt 2.0 — Private message encryption</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="crypto.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="crypto-shell">
+    <a class="back-link" href="index.html">← Back to the quiz</a>
+    <header class="crypto-heading"><div class="eyebrow"><span class="eyebrow-dot"></span> PRIVATE MESSAGE TOOL</div><h1>LCrypt <span>2.0</span></h1><p class="subtitle">Encrypt a message on this device. Share the envelope and passphrase separately.</p></header>
+    <p class="crypto-notice">LCrypt uses browser cryptography. Keep your passphrase private; anyone with it can decrypt your message. This tool does not hide quiz answers from browser developer tools.</p>
+    <div class="crypto-grid">
+      <section class="crypto-card glass"><h2>Encrypt</h2><label for="plainInput">Message</label><textarea id="plainInput" rows="5" placeholder="Type a message…"></textarea><label for="encryptPassphrase">Passphrase</label><input id="encryptPassphrase" type="password" autocomplete="new-password" placeholder="Use a strong, shared passphrase"><button class="primary-button crypto-button" id="encryptButton">Encrypt message</button><label for="encryptedOutput">Encrypted envelope</label><textarea id="encryptedOutput" rows="6" readonly placeholder="Your encrypted JSON appears here"></textarea><button class="secondary-button" id="copyEnvelope">Copy encrypted message</button></section>
+      <section class="crypto-card glass"><h2>Decrypt</h2><label for="encryptedInput">Encrypted envelope</label><textarea id="encryptedInput" rows="6" placeholder="Paste an LCrypt 2.0 JSON envelope"></textarea><button class="secondary-button" id="pasteEnvelope">Paste from clipboard</button><label for="decryptPassphrase">Passphrase</label><input id="decryptPassphrase" type="password" autocomplete="current-password" placeholder="Enter the shared passphrase"><button class="primary-button crypto-button" id="decryptButton">Decrypt message</button><label for="plainOutput">Decrypted message</label><textarea id="plainOutput" rows="5" readonly placeholder="Authenticated plaintext appears here"></textarea><button class="secondary-button" id="copyPlain">Copy decrypted message</button></section>
+    </div>
+    <p class="crypto-status" id="cryptoStatus" role="status" aria-live="polite">Your passphrase is used only in this page session.</p>
+  </main>
+  <script type="module" src="crypto-ui.js"></script>
+</body>
+</html>

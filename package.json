@@ -1,0 +1,11 @@
+{
+  "name": "driving-license-practice",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "hash-wasm": "^4.12.0"
+  }
+}

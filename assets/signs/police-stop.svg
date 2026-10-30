@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">Police officer stop signal</title><desc id="desc">An original illustration of a uniformed officer holding a hand up to stop traffic.</desc>
+  <circle cx="90" cy="90" r="86" fill="#f5f1ff"/>
+  <path d="M56 153c3-27 16-39 34-39s31 12 34 39" fill="#34275e"/>
+  <path d="M69 72c0-18 9-30 21-30s21 12 21 30v31H69z" fill="#f0c6a4"/>
+  <path d="m61 65 29-18 29 18-4 7H65z" fill="#6550a8"/><path d="M64 66h52" stroke="#f0c6a4" stroke-width="4"/>
+  <path d="M90 76v10" stroke="#7e4b3e" stroke-width="3" stroke-linecap="round"/><path d="M78 67h.1m24 0h.1" stroke="#332b40" stroke-width="4" stroke-linecap="round"/>
+  <path d="M68 119 48 88l10-8 27 25m27 14 15-30 11 5-12 35" fill="#34275e" stroke="#34275e" stroke-width="9" stroke-linejoin="round"/>
+  <path d="m137 94 2-20m-2 8 9-7m-9 7-8-8" fill="none" stroke="#f0c6a4" stroke-width="7" stroke-linecap="round"/>
+  <path d="m82 118 8 10 8-10" fill="#ffda91"/>
+</svg>
