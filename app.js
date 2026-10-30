@@ -9,7 +9,14 @@
   let checked = false;
   let score = 0;
   let menuOpen = false;
+  let quizSessionId = sessionStorage.getItem("drive-quiz-session") || crypto.randomUUID();
+  sessionStorage.setItem("drive-quiz-session", quizSessionId);
   const quizApiUrl = window.QUIZ_API_URL || "";
+
+  function startNewQuizSession() {
+    quizSessionId = crypto.randomUUID();
+    sessionStorage.setItem("drive-quiz-session", quizSessionId);
+  }
 
   const topicTrigger = $("topicTrigger");
   const topicMenu = $("topicMenu");
@@ -34,6 +41,7 @@
       option.className = `topic-option${category === activeCategory ? " active" : ""}`;
       option.innerHTML = `<span>${category}</span><span class="topic-count">${questionCount(category)}</span>`;
       option.addEventListener("click", () => {
+        startNewQuizSession();
         activeCategory = category;
         visibleQuestions = category === "All topics" ? QUESTION_BANK : QUESTION_BANK.filter(q => q.category === category);
         index = 0; score = 0; selected = null; checked = false;
@@ -89,14 +97,14 @@
     const apiBase = quizApiUrl.replace(/\/$/u, "");
     fetch(`${apiBase}/api/attempt`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ questionId: question.id })
+      body: JSON.stringify({ questionId: question.id, sessionId: quizSessionId })
     }).then(async (response) => {
       const attempt = await response.json();
       if (!response.ok) { const error = new Error("Attempt unavailable"); error.status = response.status; throw error; }
       return attempt;
     }).then(({ attemptToken }) => fetch(`${apiBase}/api/check`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ questionId: question.id, selectedIndex: selected, attemptToken })
+      body: JSON.stringify({ questionId: question.id, selectedIndex: selected, attemptToken, sessionId: quizSessionId })
     })).then(async (response) => {
       const result = await response.json();
       if (!response.ok) { const error = new Error("Answer check unavailable"); error.status = response.status; throw error; }
@@ -118,7 +126,7 @@
         [...$("answers").children].forEach((el) => { el.disabled = true; });
         const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
         $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Attempt already used";
-        $("feedbackText").textContent = "Only one check per question is allowed from this connection every 24 hours.";
+        $("feedbackText").textContent = "This question was already checked in this quiz run. Start a new quiz run to try it again.";
         $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
         actionButton.disabled = false;
         return;
@@ -134,7 +142,7 @@
   }
   function advance() {
     if (!checked) { checkAnswer(); return; }
-    if (index === visibleQuestions.length - 1) { index = 0; score = 0; $("scoreCount").textContent = "0"; }
+    if (index === visibleQuestions.length - 1) { startNewQuizSession(); index = 0; score = 0; $("scoreCount").textContent = "0"; }
     else index += 1;
     renderQuestion();
   }

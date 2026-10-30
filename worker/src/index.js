@@ -1,7 +1,6 @@
 const textEncoder = new TextEncoder();
 const GENERIC_ERROR = { error: "Unable to check this answer." };
 const DAY_MS = 24 * 60 * 60 * 1000;
-const RATE_LIMIT_PER_MINUTE = 30;
 
 function json(body, status, origin) {
   const headers = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Vary": "Origin" };
@@ -30,40 +29,26 @@ export class AttemptGuard {
 
   async fetch(request) {
     try {
-      const { action, questionId, token } = await request.json();
-      if (!["issue", "consume"].includes(action) || typeof questionId !== "string" || !/^q-[0-9]{2}$/u.test(questionId)) {
+      const { action, questionId, sessionId, token } = await request.json();
+      if (!["issue", "consume"].includes(action) || typeof questionId !== "string" || !/^q-[0-9]{2}$/u.test(questionId) || typeof sessionId !== "string" || !/^[0-9a-f-]{36}$/u.test(sessionId)) {
         return Response.json({ error: "invalid" }, { status: 400 });
       }
       const now = Date.now();
       const freshToken = action === "issue" ? randomToken() : null;
       const result = await this.state.storage.transaction(async (txn) => {
-        const rateKey = action === "issue" ? "issueTimes" : "checkTimes";
-        const recent = (await txn.get(rateKey) || []).filter((time) => now - time < 60_000);
-        const attemptKey = `question:${questionId}`;
+        const attemptKey = `session:${sessionId}:question:${questionId}`;
         const attempt = await txn.get(attemptKey);
         if (action === "issue") {
           if (attempt && attempt.expiresAt > now) {
             if (attempt.used) return { status: 409, body: { error: "attempt_unavailable" } };
             return { status: 200, body: { attemptToken: attempt.token } };
           }
-          if (recent.length >= RATE_LIMIT_PER_MINUTE) {
-            await txn.put(rateKey, recent);
-            return { status: 429, body: { error: "anyadat_tord_fel_hulyegyerek" } };
-          }
-          recent.push(now);
-          await txn.put(rateKey, recent);
           await txn.put(attemptKey, { token: freshToken, expiresAt: now + DAY_MS, used: false });
           return { status: 200, body: { attemptToken: freshToken } };
         }
         if (!attempt || attempt.expiresAt <= now || attempt.used || typeof token !== "string" || token !== attempt.token) {
           return { status: 409, body: { error: "attempt_unavailable" } };
         }
-        if (recent.length >= RATE_LIMIT_PER_MINUTE) {
-          await txn.put(rateKey, recent);
-          return { status: 429, body: { error: "anyadat_tord_fel_hulyegyerek" } };
-        }
-        recent.push(now);
-        await txn.put(rateKey, recent);
         await txn.put(attemptKey, { ...attempt, used: true });
         return { status: 200, body: { accepted: true } };
       });
@@ -74,7 +59,7 @@ export class AttemptGuard {
   }
 }
 
-async function getAttemptGuard(request, env, action, questionId, token = "") {
+async function getAttemptGuard(request, env, action, questionId, sessionId, token = "") {
   const visitorIp = request.headers.get("CF-Connecting-IP") || "unknown";
   const hmacKey = await crypto.subtle.importKey("raw", textEncoder.encode(env.ANSWER_KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const visitorDigest = await crypto.subtle.sign("HMAC", hmacKey, textEncoder.encode(visitorIp));
@@ -83,7 +68,7 @@ async function getAttemptGuard(request, env, action, questionId, token = "") {
   return stub.fetch("https://attempt-guard.internal/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action, questionId, token })
+    body: JSON.stringify({ action, questionId, sessionId, token })
   });
 }
 
@@ -99,8 +84,8 @@ async function issueAttempt(request, env) {
     const rawBody = await request.text();
     if (new TextEncoder().encode(rawBody).byteLength > 1024) return json({ error: "Request too large." }, 413, origin);
     const body = JSON.parse(rawBody);
-    if (!body || typeof body.questionId !== "string" || !/^q-[0-9]{2}$/u.test(body.questionId)) return json({ error: "Invalid question." }, 400, origin);
-    const guardResponse = await getAttemptGuard(request, env, "issue", body.questionId);
+    if (!body || typeof body.questionId !== "string" || !/^q-[0-9]{2}$/u.test(body.questionId) || typeof body.sessionId !== "string" || !/^[0-9a-f-]{36}$/u.test(body.sessionId)) return json({ error: "Invalid question or session." }, 400, origin);
+    const guardResponse = await getAttemptGuard(request, env, "issue", body.questionId, body.sessionId);
     return json(await guardResponse.json(), guardResponse.status, origin);
   } catch {
     return json(GENERIC_ERROR, 503, origin);
@@ -214,9 +199,9 @@ export async function checkAnswer(request, env) {
     const rawBody = await request.text();
     if (new TextEncoder().encode(rawBody).byteLength > 1024) return json({ error: "Request too large." }, 413, origin);
     const body = JSON.parse(rawBody);
-    if (!body || typeof body.questionId !== "string" || !/^q-[0-9]{2}$/u.test(body.questionId) || !Number.isInteger(body.selectedIndex) || body.selectedIndex < 0 || body.selectedIndex > 2) return json({ error: "Invalid answer." }, 400, origin);
+    if (!body || typeof body.questionId !== "string" || !/^q-[0-9]{2}$/u.test(body.questionId) || typeof body.sessionId !== "string" || !/^[0-9a-f-]{36}$/u.test(body.sessionId) || !Number.isInteger(body.selectedIndex) || body.selectedIndex < 0 || body.selectedIndex > 2) return json({ error: "Invalid answer." }, 400, origin);
     if (typeof body.attemptToken !== "string" || !/^[A-Za-z0-9_-]{43}$/u.test(body.attemptToken)) return json({ error: "Invalid attempt." }, 400, origin);
-    const guardResponse = await getAttemptGuard(request, env, "consume", body.questionId, body.attemptToken);
+    const guardResponse = await getAttemptGuard(request, env, "consume", body.questionId, body.sessionId, body.attemptToken);
     if (!guardResponse.ok) return json(await guardResponse.json(), guardResponse.status, origin);
     const answers = await loadAnswers(env, request.url);
     const answer = answers[body.questionId];
