@@ -251,17 +251,6 @@
         guestCard.querySelector(".guest-footnote").textContent = "Your session ended. Sign in to continue.";
         return;
       }
-      if (error.status === 409) {
-        checked = true;
-        [...$("answers").children].forEach((el) => { el.disabled = true; });
-        const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
-        $("successBurst").hidden = true;
-        $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Attempt already used";
-        $("feedbackText").textContent = "This question was already checked in this quiz run. Start a new quiz run to try it again.";
-        $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
-        actionButton.disabled = false;
-        return;
-      }
       checked = false;
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
       $("successBurst").hidden = true;

@@ -155,16 +155,14 @@ export class AttemptGuard {
         const attempt = await txn.get(attemptKey);
         if (action === "issue") {
           if (attempt && attempt.expiresAt > now) {
-            if (attempt.used) return { status: 409, body: { error: "attempt_unavailable" } };
             return { status: 200, body: { attemptToken: attempt.token } };
           }
-          await txn.put(attemptKey, { token: freshToken, expiresAt: now + DAY_MS, used: false });
+          await txn.put(attemptKey, { token: freshToken, expiresAt: now + DAY_MS });
           return { status: 200, body: { attemptToken: freshToken } };
         }
-        if (!attempt || attempt.expiresAt <= now || attempt.used || typeof token !== "string" || token !== attempt.token) {
+        if (!attempt || attempt.expiresAt <= now || typeof token !== "string" || token !== attempt.token) {
           return { status: 409, body: { error: "attempt_unavailable" } };
         }
-        await txn.put(attemptKey, { ...attempt, used: true });
         return { status: 200, body: { accepted: true } };
       });
       return Response.json(result.body, { status: result.status });
