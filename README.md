@@ -20,6 +20,8 @@ Question text and choices are stored in `worker/public/quiz-questions.enc.json`,
 
 Answer checks require a random, one-use token bound to the visitor's IP and question. A Durable Object permits one attempt per question from the same IP per 24 hours and limits successful new token issuances and checks to 30 each per minute; malformed or reused attempts do not consume that limit. It stores a keyed hash of the IP as the object name, not the raw address. This prevents the simple console loop of trying all three choices from the same connection; it cannot stop someone rotating IPs or using a different network.
 
+The owner-only `POST /api/admin/answers` endpoint returns correct answer indexes only when the request includes `Authorization: Bearer <ADMIN_KEY>`. `ADMIN_KEY` is a Cloudflare Worker secret and must never be added to the frontend or GitHub. Missing or incorrect keys receive HTTP 401. Set it from the repository root with `pnpm dlx wrangler secret put ADMIN_KEY --config worker/wrangler.jsonc`.
+
 The intended checker URL is `https://driving-license-answer-checker.driving-license-practice.workers.dev`. To update the question bank, prepare an ignored local JSON array containing the question text and choices, generate a fresh key, and encrypt it:
 
 1. Run `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Content -NoNewline worker/.question-key.local`.

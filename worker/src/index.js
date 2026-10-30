@@ -167,6 +167,38 @@ async function getQuestions(request, env) {
   }
 }
 
+function sameSecret(a, b) {
+  const left = textEncoder.encode(a);
+  const right = textEncoder.encode(b);
+  let difference = left.length ^ right.length;
+  const length = Math.max(left.length, right.length);
+  for (let i = 0; i < length; i += 1) difference |= (left[i] || 0) ^ (right[i] || 0);
+  return difference === 0;
+}
+
+async function getAdminAnswers(request, env) {
+  let origin = null;
+  try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
+  if (request.headers.get("Origin") !== origin) return json({ error: "Not allowed." }, 403, null);
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, Authorization", "Access-Control-Max-Age": "86400", "Vary": "Origin" } });
+  }
+  if (request.method !== "POST") return json({ error: "Method not allowed." }, 405, origin);
+  const configuredKey = env.ADMIN_KEY;
+  const authorization = request.headers.get("Authorization") || "";
+  const suppliedKey = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+  if (typeof configuredKey !== "string" || !configuredKey || !sameSecret(suppliedKey, configuredKey)) {
+    return json({ error: "Unauthorized." }, 401, origin);
+  }
+  try {
+    const answers = await loadAnswers(env, request.url);
+    const correctIndexes = Object.fromEntries(Object.entries(answers).map(([id, entry]) => [id, entry.correct]));
+    return json({ answers: correctIndexes }, 200, origin);
+  } catch {
+    return json(GENERIC_ERROR, 503, origin);
+  }
+}
+
 export async function checkAnswer(request, env) {
   let origin = null;
   try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
@@ -200,6 +232,7 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === "/api/check") return checkAnswer(request, env);
     if (url.pathname === "/api/attempt") return issueAttempt(request, env);
+    if (url.pathname === "/api/admin/answers") return getAdminAnswers(request, env);
     if (url.pathname === "/api/questions") return getQuestions(request, env);
     if (url.pathname === "/api/health") return json({ status: "ok" }, 200, request.headers.get("Origin"));
     return env.ASSETS.fetch(request);
