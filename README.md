@@ -12,4 +12,4 @@ Push the repository to GitHub, then enable Pages from the repository's `main` br
 
 ## Content
 
-The initial question bank is derived from `Desktop/databank.txt`. Additional KRESZ facts are sourced from the current Hungarian KRESZ text at [net.jogtar.hu](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm). The data-bank file remains the source record for question content.
+The initial question bank is derived from the user's local notes. All 18 prompts, answer choices, correct answers, and explanations are recorded in that data-bank file. Additional KRESZ facts are sourced from the current Hungarian KRESZ text at [net.jogtar.hu](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm).
