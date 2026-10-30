@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "driving-license-answer-checker",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-30",
+  "workers_dev": true,
+  "vars": {
+    "ALLOWED_ORIGIN": "https://tihonovka.github.io"
+  },
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  }
+}

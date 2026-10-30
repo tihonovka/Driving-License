@@ -2,3 +2,6 @@
 /work/
 /node_modules/
 /pnpm-workspace.yaml
+/worker/.dev.vars
+/worker/.answer-key.local
+/worker/answer-bank.source.local.json

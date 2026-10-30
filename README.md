@@ -14,12 +14,19 @@ Push the repository to GitHub, then enable Pages from the repository's `main` br
 
 The initial question bank is derived from the user's local notes. All 18 prompts, answer choices, correct answers, and explanations are recorded in that data-bank file. Additional KRESZ facts are sourced from the current Hungarian KRESZ text at [net.jogtar.hu](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm).
 
-## LCrypt 2.0
+## Private answer checker
 
-Open `crypto.html` to encrypt or decrypt a message. The portable JSON envelope uses AES-256-GCM, a random 256-bit data key wrapped with AES-256-KW, and Argon2id (64 MiB, 3 iterations, parallelism 1). Each encryption generates a fresh 16-byte salt and 12-byte nonce. Crypto uses the browser Web Crypto API; Argon2id is provided by the MIT-licensed `hash-wasm` package (vendored at `vendor/hash-wasm.esm.min.js`).
+The GitHub Pages client contains question prompts and choices only. Correct indexes are stored in `worker/public/answer-bank.enc.json`, encrypted with AES-256-GCM. The random 256-bit key is a Cloudflare Worker secret named `ANSWER_KEY`; Cloudflare protects the secret at rest, and it is never sent to browsers or included in the repository. The Worker decrypts the bank for comparison and returns only `{ "correct": true|false }`.
 
-Install Node.js 24 or newer and pnpm, then run `pnpm install` and `pnpm test` to verify Unicode round trips, wrong-password rejection, ciphertext tampering, and fresh randomness. Never use the weak example passphrase `elpis` for confidential messages; LCrypt does not include or default to it.
+The intended checker URL is `https://driving-license-answer-checker.driving-license-practice.workers.dev`. To update the answer bank, prepare an ignored local JSON file mapping each question ID to its correct index, generate a fresh key, and encrypt the bank:
 
-The static quiz still serves `questions.js` openly. Encrypting browser-delivered quiz data cannot hide its plaintext from the person running the page or inspecting DevTools. A private question bank with hidden answer keys needs server-side validation and a server-side secret; GitHub Pages alone cannot provide that.
+1. Run `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Content -NoNewline worker/.answer-key.local`.
+2. Run `node worker/scripts/encrypt-answer-bank.mjs path/to/private-answer-source.json`.
+3. Run `pnpm worker:deploy`, then `Get-Content -Raw worker/.answer-key.local | pnpm dlx wrangler secret put ANSWER_KEY --config worker/wrangler.jsonc`.
+4. Delete the local key with `Remove-Item -LiteralPath worker/.answer-key.local` after Cloudflare accepts it.
+
+Never commit the local key or private answer source. Run `pnpm test` to verify correct/wrong checks, tamper rejection, and origin/input validation.
+
+The browser receives no correct index or answer key. The checker returns only whether a submitted choice is correct.
 
 The external `kreszteszt.net/tablak/` catalogue has four general-purpose SVG icons; its individual road-sign illustrations are JPEGs. This project uses original, locally drawn SVG diagrams for the quiz questions that benefit from a sign illustration.

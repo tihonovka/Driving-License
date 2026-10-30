@@ -8,6 +8,7 @@
   let checked = false;
   let score = 0;
   let menuOpen = false;
+  const quizApiUrl = window.QUIZ_API_URL || "";
 
   const topicTrigger = $("topicTrigger");
   const topicMenu = $("topicMenu");
@@ -76,16 +77,37 @@
 
   function checkAnswer() {
     const question = visibleQuestions[index]; checked = true;
-    const correct = selected === question.correct;
-    if (correct) { score += 1; $("scoreCount").textContent = String(score); }
-    [...$("answers").children].forEach((el, i) => { el.disabled = true; if (i === question.correct) el.classList.add("correct"); else if (i === selected) el.classList.add("incorrect"); });
-    const feedback = $("feedback"); feedback.hidden = false; feedback.classList.toggle("incorrect", !correct);
-    $("feedbackIcon").textContent = correct ? "✓" : "!";
-    $("feedbackTitle").textContent = correct ? "Correct" : "Not quite";
-    $("feedbackText").textContent = question.explanation;
-    if (question.source) { $("sourceLink").href = question.source; $("sourceLink").hidden = false; }
-    $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
-    actionButton.disabled = false;
+    if (!quizApiUrl) {
+      const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
+      $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Checker unavailable";
+      $("feedbackText").textContent = "The answer checker is not connected yet.";
+      return;
+    }
+    actionButton.disabled = true;
+    [...$("answers").children].forEach((el) => { el.disabled = true; });
+    fetch(`${quizApiUrl.replace(/\/$/u, "")}/api/check`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId: question.id, selectedIndex: selected })
+    }).then((response) => { if (!response.ok) throw new Error("Request failed"); return response.json(); }).then((result) => {
+      const correct = result.correct === true;
+      if (correct) { score += 1; $("scoreCount").textContent = String(score); }
+      [...$("answers").children].forEach((el, i) => { el.disabled = true; if (i === selected) el.classList.add(correct ? "correct" : "incorrect"); });
+      const feedback = $("feedback"); feedback.hidden = false; feedback.classList.toggle("incorrect", !correct);
+      $("feedbackIcon").textContent = correct ? "✓" : "!";
+      $("feedbackTitle").textContent = correct ? "Correct" : "Not quite";
+      $("feedbackText").textContent = "Keep practicing the Hungarian road rules.";
+      $("sourceLink").hidden = true;
+      $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
+      actionButton.disabled = false;
+    }).catch(() => {
+      checked = false;
+      const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
+      $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Could not check answer";
+      $("feedbackText").textContent = "Please try again in a moment.";
+      [...$("answers").children].forEach((el) => { el.disabled = false; });
+      $("actionLabel").textContent = "Check answer";
+      actionButton.disabled = false;
+    });
   }
   function advance() {
     if (!checked) { checkAnswer(); return; }

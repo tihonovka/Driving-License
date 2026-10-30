@@ -3,9 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test"
-  },
-  "dependencies": {
-    "hash-wasm": "^4.12.0"
+    "test": "node --test",
+    "worker:dev": "pnpm dlx wrangler dev --config worker/wrangler.jsonc",
+    "worker:deploy": "pnpm dlx wrangler deploy --config worker/wrangler.jsonc"
   }
 }
