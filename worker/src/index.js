@@ -1,6 +1,7 @@
 const textEncoder = new TextEncoder();
 const GENERIC_ERROR = { error: "Unable to check this answer." };
 const DAY_MS = 24 * 60 * 60 * 1000;
+const RATE_LIMIT_PER_MINUTE = 30;
 
 function json(body, status, origin) {
   const headers = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Vary": "Origin" };
@@ -38,13 +39,6 @@ export class AttemptGuard {
       const result = await this.state.storage.transaction(async (txn) => {
         const rateKey = action === "issue" ? "issueTimes" : "checkTimes";
         const recent = (await txn.get(rateKey) || []).filter((time) => now - time < 60_000);
-        if (recent.length >= 5) {
-          await txn.put(rateKey, recent);
-          return { status: 429, body: { error: "rate_limited" } };
-        }
-        recent.push(now);
-        await txn.put(rateKey, recent);
-
         const attemptKey = `question:${questionId}`;
         const attempt = await txn.get(attemptKey);
         if (action === "issue") {
@@ -52,12 +46,24 @@ export class AttemptGuard {
             if (attempt.used) return { status: 409, body: { error: "attempt_unavailable" } };
             return { status: 200, body: { attemptToken: attempt.token } };
           }
+          if (recent.length >= RATE_LIMIT_PER_MINUTE) {
+            await txn.put(rateKey, recent);
+            return { status: 429, body: { error: "rate_limited" } };
+          }
+          recent.push(now);
+          await txn.put(rateKey, recent);
           await txn.put(attemptKey, { token: freshToken, expiresAt: now + DAY_MS, used: false });
           return { status: 200, body: { attemptToken: freshToken } };
         }
         if (!attempt || attempt.expiresAt <= now || attempt.used || typeof token !== "string" || token !== attempt.token) {
           return { status: 409, body: { error: "attempt_unavailable" } };
         }
+        if (recent.length >= RATE_LIMIT_PER_MINUTE) {
+          await txn.put(rateKey, recent);
+          return { status: 429, body: { error: "rate_limited" } };
+        }
+        recent.push(now);
+        await txn.put(rateKey, recent);
         await txn.put(attemptKey, { ...attempt, used: true });
         return { status: 200, body: { accepted: true } };
       });
