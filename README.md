@@ -1,38 +1,237 @@
-# Drive — Hungarian theory practice
+# 🦂 I DRIVE.
+### Hungarian KRESZ Practice Simulator
+**Literally me. Literally driving. Literally failing the right-hand rule.**
 
-A lightweight, static driving theory practice site built for GitHub Pages. Question and answer content is in Hungarian; the surrounding interface is in English.
+![Ryan Gosling vezet a Drive (2011) című filmben](https://images.cinefil.com/movies/550784.webp)
 
-## Run locally
+> *"I drive."*
+>
+> **Ryan Gosling, valószínűleg miután sikerült a KRESZ-vizsgája.**
 
-Open `index.html` in a browser, or serve this folder with any static file server.
+---
 
-## Publish with GitHub Pages
+## 🚗 MI A FASZOM EZ?
 
-Push the repository to GitHub, then enable Pages from the repository's `main` branch and `/ (root)` folder. The project has no build step.
+Üdvözöllek az **I DRIVE** világában, ahol Ryan Gosling vezet, te meg próbálod megfejteni, hogy a jobbkéz-szabály szerint mi a jó büdös franc történik egy kereszteződésben.
 
-## Content
+Ez egy könnyű, gyors, statikus **magyar KRESZ-gyakorló weboldal**, amely GitHub Pages-en is működik.
 
-The initial question bank is derived from the user's local notes. All 18 prompts, answer choices, correct answers, and explanations are recorded in that data-bank file. Additional KRESZ facts are sourced from the current Hungarian KRESZ text at [net.jogtar.hu](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm).
+Az oldal kezelőfelülete angol, mert nemzetközi színvonalon szeretnénk elbukni a magyar KRESZ-vizsgát.
 
-## Private answer checker
+A kérdések és válaszok természetesen magyarul vannak, hogy a vizsgán ne érjen meglepetés.
 
-Question text and choices are stored in `worker/public/quiz-questions.enc.json`, encrypted with AES-256-GCM. Correct indexes are in the separate encrypted `worker/public/answer-bank.enc.json`. The decryption keys are Cloudflare Worker secrets named `QUESTION_KEY` and `ANSWER_KEY`; they are not included in Git or sent to browsers. The Worker returns question text and choices for display, and only `{ "correct": true|false }` for answer checks.
+**Küldetés:** megszerezni a jogosítványt, mielőtt Gábor megtanulna indexelni.
 
-Quiz endpoints require a signed-in account. Usernames and PBKDF2-SHA-256 password hashes are stored in the online Cloudflare D1 database; passwords are never stored in plaintext. Sessions are random bearer tokens stored hashed in D1, held in the browser's session storage, and expire after seven days. New accounts require the private Cloudflare Worker secret `REGISTRATION_CODE`.
+---
 
-Answer checks require a random, one-use token bound to a question and a quiz-run ID. There is no per-minute rate limit or IP-based daily lock. Each question can be checked once per quiz run; starting a new run or choosing a different topic creates a fresh run. Login prevents anonymous requests, but a signed-in user can still inspect the browser's API calls. No public browser quiz can hide its correctness endpoint from its own user.
+## 🧠 THE GOSLING KNOWLEDGE BASE
 
-The owner-only `POST /api/admin/answers` endpoint returns correct answer indexes only when the request includes `Authorization: Bearer <ADMIN_KEY>`. `ADMIN_KEY` is a Cloudflare Worker secret and must never be added to the frontend or GitHub. Missing or incorrect keys receive HTTP 401. Set it from the repository root with `pnpm dlx wrangler secret put ADMIN_KEY --config worker/wrangler.jsonc`.
+Jelenleg **18 darab KRESZ-kérdés** várja, hogy megdolgoztasd az agyad.
 
-The intended checker URL is `https://driving-license-answer-checker.driving-license-practice.workers.dev`. To update the question bank, prepare an ignored local JSON array containing the question text and choices, generate a fresh key, and encrypt it:
+Minden kérdéshez tartozik:
 
-1. Run `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Content -NoNewline worker/.question-key.local`.
-2. Run `node worker/scripts/encrypt-question-bank.mjs path/to/private-question-source.json`.
-3. Run `pnpm worker:deploy`, then `Get-Content -Raw worker/.question-key.local | pnpm dlx wrangler secret put QUESTION_KEY --config worker/wrangler.jsonc`.
-4. Delete the local key with `Remove-Item -LiteralPath worker/.question-key.local` after Cloudflare accepts it.
+- 📝 Magyar nyelvű kérdés
+- 🔢 Több válaszlehetőség
+- ✅ Egy helyes megfejtés
+- 📖 Magyarázat, hogy miért éppen az a helyes válasz
+- 🚦 Egyes feladatoknál közlekedési táblák és saját ábrák
+- 💀 Potenciális mentális összeomlás, ha ötödször is elrontod az elsőbbségadást
 
-Never commit local keys or private source files. Run `pnpm test` to verify correct/wrong checks, tamper rejection, and origin/input validation.
+A kérdésbank az eredeti tanulási jegyzetekből készült, további KRESZ-információk pedig a [hatályos magyar KRESZ jogszabályszövegéből](https://net.jogtar.hu/jogszabaly?docid=97500001.kpm) származnak.
 
-Question prompts and choices are necessarily readable in the browser while displayed. Correct indexes and both decryption keys remain server-side; the checker returns only whether a submitted choice is correct. A debugger loop cannot prevent DevTools inspection and would freeze the quiz.
+> **FUN FACT:** A BMW-ben is van index. Gábor állítólag még kutatja, hol.
 
-The external `kreszteszt.net/tablak/` catalogue has four general-purpose SVG icons; its individual road-sign illustrations are JPEGs. This project uses original, locally drawn SVG diagrams for the quiz questions that benefit from a sign illustration.
+---
+
+## 🔐 THE SECRET GOSLING TECHNOLOGY
+
+### AES-256-GCM Encryption
+
+Itt a válaszokat nem osztogatjuk úgy, mint a szórólapokat a Blahán, bazdmeg.
+
+A projekt **AES-256-GCM titkosítást** használ két különálló, titkosított adatállománnyal.
+
+| Fájl | Mit rejt? |
+|---|---|
+| `quiz-questions.enc.json` | Kérdések és válaszlehetőségek |
+| `answer-bank.enc.json` | Helyes válaszok indexei |
+
+A visszafejtéshez szükséges kulcsok:
+
+- `QUESTION_KEY`
+- `ANSWER_KEY`
+
+Ezek kizárólag a **Cloudflare Worker titkos környezeti változóiban** élnek.
+
+Nem kerülnek GitHubra, nem kerülnek a böngészőbe, és nem kapja meg őket Gábor sem, hiába kérdezi meg hatszor.
+
+A Worker visszafejti a megjelenítendő kérdéseket, ellenőrzi a beküldött választ, majd visszaküldi:
+
+`{ "correct": true }`
+
+vagy
+
+`{ "correct": false }`
+
+**Ennyi, pici.** Nem küldi vissza a helyes válasz indexét.
+
+---
+
+## 🕶️ NO ACCOUNT, NO DRIVE
+
+### Authentication System
+
+Mielőtt beszállnál Gosling mellé a volánhoz, be kell jelentkezned.
+
+A felhasználói rendszer **Cloudflare D1 adatbázison** működik.
+
+| Funkció | Technológia |
+|---|---|
+| Felhasználónevek | Cloudflare D1 |
+| Jelszóvédelem | PBKDF2-SHA-256 |
+| Munkamenetek | Véletlenszerű bearer tokenek |
+| Tokenek tárolása a szerveren | Hash-elve a D1-ben |
+| Böngészős tárolás | Session Storage |
+| Munkamenet lejárata | 7 nap |
+| Regisztráció | Titkos regisztrációs kód |
+
+A jelszavakat a rendszer **nem tárolja olvasható szövegként**.
+
+Új fiókot pedig csak a `REGISTRATION_CODE` birtokában lehet létrehozni.
+
+> **ACCESS DENIED:** Gábor megpróbált belépni a kenyérpirító jelszavával.
+
+---
+
+## 🎯 ONE QUESTION. ONE SHOT.
+
+### Anti-Cheating System
+
+Minden kérdés ellenőrzéséhez egy véletlenszerű, egyszer használatos token szükséges.
+
+Ez a token a konkrét kérdéshez és az adott tesztkör azonosítójához kapcsolódik.
+
+**A szabályok:**
+
+1. Egy kérdésre tesztkörönként csak egy ellenőrzés jár.
+2. Új tesztkör esetén új ellenőrzési lehetőséget kapsz.
+3. Témaváltáskor szintén új tesztkör indul.
+4. Nincs percenkénti kéréskorlát.
+5. Nincs IP-cím alapú napi tiltás.
+
+Nem kell attól félned, hogy a rendszer azért tilt le, mert túl intenzíven tanulsz.
+
+**DE!** A böngészőben megjelenített kérdéseket és az API-hívásokat egy bejelentkezett felhasználó továbbra is megvizsgálhatja.
+
+A frontendből a helyes válasz ellenőrzésének működését sem lehet tökéletesen elrejteni.
+
+A DevTools-ablak lefagyasztása nem biztonság, hanem egy technológiai hasgörcs.
+
+---
+
+## 👑 THE GOSLING ADMIN CLUB
+
+### Owner-Only Answer Access
+
+Létezik egy külön adminisztrátori végpont:
+
+`POST /api/admin/answers`
+
+A végpont kizárólag érvényes `ADMIN_KEY` használatával adja vissza a helyes válaszok indexeit.
+
+A hozzáféréshez szükséges fejléc:
+
+`Authorization: Bearer <ADMIN_KEY>`
+
+Hibás vagy hiányzó kulcs esetén:
+
+**HTTP 401 UNAUTHORIZED**
+
+Magyarul: **TAKARODJ VISSZA A KRESZ-KÖNYVHÖZ.**
+
+Az `ADMIN_KEY` kizárólag Cloudflare Worker secret lehet. A frontendben és a GitHub-repositoryban semmi keresnivalója.
+
+---
+
+## 🚦 THE ROAD SIGN COLLECTION
+
+Nem lenne igazi KRESZ-teszt néhány tábla nélkül, amitől az ember elfelejti, merre van az előre.
+
+A projekt saját készítésű, helyben tárolt **SVG közlekedési ábrákat** használ.
+
+Az eredeti [kreszteszt.net táblakatalógusban](https://kreszteszt.net/tablak/) négy általános SVG ikon található, az egyedi közlekedési táblák illusztrációi pedig JPEG-formátumúak.
+
+Ezért a rendszer saját SVG-ábrákat alkalmaz azokhoz a kérdésekhez, amelyekhez szükségesek.
+
+**Előnyök:**
+
+- Éles, méretezhető ábrák
+- Gyors megjelenítés
+- Helyben tárolt grafika
+- Nincs szükség külső képkérésekre az ábrák megjelenítéséhez
+
+> Gábor meglátott egy STOP táblát, és megkérdezte, hogy ez a Spotify Premium új logója-e.
+
+---
+
+## 🏎️ THE TECHNOLOGY UNDER THE HOOD
+
+| Technológia | Feladat |
+|---|---|
+| HTML / CSS / JavaScript | A weboldal |
+| GitHub Pages | Statikus frontend |
+| Cloudflare Workers | Szerveroldali API |
+| Cloudflare D1 | Felhasználók és munkamenetek |
+| AES-256-GCM | Kérdés- és válaszadatok titkosítása |
+| PBKDF2-SHA-256 | Jelszavak védelme |
+| SVG | Közlekedési ábrák |
+
+Nincs bonyolult frontend buildfolyamat.
+
+Nincs hárommillió felesleges JavaScript-csomag.
+
+Csak a vezetés, a KRESZ és az egzisztenciális válság egy egyenrangú útkereszteződésben.
+
+---
+
+## 🧪 TESTED, NOT GABOR APPROVED
+
+Az automatizált tesztek ellenőrzik:
+
+- ✅ A helyes válaszok felismerését
+- ✅ A hibás válaszok elutasítását
+- ✅ A módosított vagy hamisított adatok elutasítását
+- ✅ A bemeneti adatok ellenőrzését
+- ✅ A kérések eredetének validálását
+
+Mert ha egyetlen rossz válasz képes lenne feltörni az egész rendszert, akkor inkább Gáborra bíznánk a vezetést.
+
+És ezt senki sem szeretné.
+
+---
+
+## 🌃 FINAL DESTINATION
+
+**The city is yours. The road is yours. The right of way probably isn't.**
+
+Ez a projekt azoknak készült, akik szeretnék megtanulni a magyar közlekedési szabályokat anélkül, hogy harminc különböző weboldalon keresnék ugyanazt a kérdést.
+
+Tanulj. Gyakorolj. Hibázz. Próbáld újra.
+
+És ha már mindent tudsz, irány a valódi forgalom, természetesen oktatóval és a megfelelő jogosultságokkal.
+
+### 🦂 I DRIVE.
+
+**You study.**
+
+**Gábor fails.**
+
+**Ryan Gosling approves. (Nem hivatalosan, bazdmeg.)**
+
+---
+
+*Made for future drivers, professional overthinkers, and people who genuinely believe they're Ryan Gosling.*
+
+**© 2026 I DRIVE | Hungarian Driving Theory Practice**
+
+*Kép: Drive (2011), [Cinéfil](https://www.cinefil.com/film/drive-2011). A filmjelenet jogai az eredeti jogosultakat illetik.*
