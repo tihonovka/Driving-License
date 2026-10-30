@@ -18,6 +18,8 @@ The initial question bank is derived from the user's local notes. All 18 prompts
 
 Question text and choices are stored in `worker/public/quiz-questions.enc.json`, encrypted with AES-256-GCM. Correct indexes are in the separate encrypted `worker/public/answer-bank.enc.json`. The decryption keys are Cloudflare Worker secrets named `QUESTION_KEY` and `ANSWER_KEY`; they are not included in Git or sent to browsers. The Worker returns question text and choices for display, and only `{ "correct": true|false }` for answer checks.
 
+Answer checks require a random, one-use token bound to the visitor's IP and question. A Durable Object permits one attempt per question from the same IP per 24 hours and limits token issuance and checks to five each per minute. It stores a keyed hash of the IP as the object name, not the raw address. This prevents the simple console loop of trying all three choices from the same connection; it cannot stop someone rotating IPs or using a different network.
+
 The intended checker URL is `https://driving-license-answer-checker.driving-license-practice.workers.dev`. To update the question bank, prepare an ignored local JSON array containing the question text and choices, generate a fresh key, and encrypt it:
 
 1. Run `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Content -NoNewline worker/.question-key.local`.

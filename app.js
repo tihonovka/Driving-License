@@ -86,10 +86,22 @@
     }
     actionButton.disabled = true;
     [...$("answers").children].forEach((el) => { el.disabled = true; });
-    fetch(`${quizApiUrl.replace(/\/$/u, "")}/api/check`, {
+    const apiBase = quizApiUrl.replace(/\/$/u, "");
+    fetch(`${apiBase}/api/attempt`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ questionId: question.id, selectedIndex: selected })
-    }).then((response) => { if (!response.ok) throw new Error("Request failed"); return response.json(); }).then((result) => {
+      body: JSON.stringify({ questionId: question.id })
+    }).then(async (response) => {
+      const attempt = await response.json();
+      if (!response.ok) { const error = new Error("Attempt unavailable"); error.status = response.status; throw error; }
+      return attempt;
+    }).then(({ attemptToken }) => fetch(`${apiBase}/api/check`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId: question.id, selectedIndex: selected, attemptToken })
+    })).then(async (response) => {
+      const result = await response.json();
+      if (!response.ok) { const error = new Error("Answer check unavailable"); error.status = response.status; throw error; }
+      return result;
+    }).then((result) => {
       const correct = result.correct === true;
       if (correct) { score += 1; $("scoreCount").textContent = String(score); }
       [...$("answers").children].forEach((el, i) => { el.disabled = true; if (i === selected) el.classList.add(correct ? "correct" : "incorrect"); });
@@ -100,11 +112,21 @@
       $("sourceLink").hidden = true;
       $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
       actionButton.disabled = false;
-    }).catch(() => {
+    }).catch((error) => {
+      if (error.status === 409) {
+        checked = true;
+        [...$("answers").children].forEach((el) => { el.disabled = true; });
+        const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
+        $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Attempt already used";
+        $("feedbackText").textContent = "Only one check per question is allowed from this connection every 24 hours.";
+        $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
+        actionButton.disabled = false;
+        return;
+      }
       checked = false;
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
       $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Could not check answer";
-      $("feedbackText").textContent = "Please try again in a moment.";
+      $("feedbackText").textContent = error.status === 429 ? "Too many requests. Please wait a minute and try again." : "Please try again in a moment.";
       [...$("answers").children].forEach((el) => { el.disabled = false; });
       $("actionLabel").textContent = "Check answer";
       actionButton.disabled = false;

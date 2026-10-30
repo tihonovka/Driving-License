@@ -4,6 +4,14 @@
   "main": "src/index.js",
   "compatibility_date": "2026-10-30",
   "workers_dev": true,
+  "durable_objects": {
+    "bindings": [
+      { "name": "ATTEMPT_GUARD", "class_name": "AttemptGuard" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["AttemptGuard"] }
+  ],
   "vars": {
     "ALLOWED_ORIGIN": "https://tihonovka.github.io"
   },
