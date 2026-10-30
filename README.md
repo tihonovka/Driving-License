@@ -221,18 +221,18 @@ Ez a projekt azoknak készült, akik szeretnék megtanulni a magyar közlekedés
 **Ryan Gosling approves. (Nem hivatalosan, asszem.)**
 
 ---
-# 🧠 I DRIVE. | FOGALOMTÁR
+# 🧠 JavitóVizsga Tételek
 ### For people running on 2 brain cells. 🦂
 
-> **„Nem értem, de legalább titkosítva van.”**
+> **„Nem értem, de legalább átmentem”**
 >
-> Gábor, Senior Cybersecurity Specialist (önjelölt).
+> Gábor, Senior Cybersecurity Specialist (önjelölt(kényszerből).
 
 ---
 
 ## 📚 Ezeket hasznalok asszem?
 
-| Fogalom | Mit jelent, nincsen közöd? | Wiki |
+| Fogalom | Mit jelent, ha nincsen közöd? | Wiki |
 |---|---|---|
 | **AES-256** 🔐 | Titkosítási módszer 256 bites kulccsal. Nem, Gábor, nem 256 jelszót kell beírni. | [Wikipedia](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) |
 | **GCM** 🛡️ | Titkosítási üzemmód, ami az adatok módosítását is képes észlelni. | [Wikipedia](https://en.wikipedia.org/wiki/Galois/Counter_Mode) |
@@ -268,13 +268,12 @@ Ez a projekt azoknak készült, akik szeretnék megtanulni a magyar közlekedés
 
 ### Finita la comedia
 
-> **„If you understand the documentation, you can drive the code.”**
+> **„Csak szét kellet húzni”**
 >
-> Ryan Gosling ezt nem mondta, de kurva jól hangzik.
+> Nem emlekszem ki mondta ezt de biztos valaki szét van húzva
 
-**Knowledge is power. Encryption is protection. Gábor is still loading...**
+**Knowledge is power. Encryption is protection. Gábor is repesztve..**
 
-*I DRIVE. © 2026 | A technikai fogalmakat emberi nyelvre fordítottuk.*
 
 **© 2026 I DRIVE | Hungarian Driving Theory Practice**
 
