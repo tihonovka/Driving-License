@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">Pedestrian crossing sign</title><desc id="desc">A blue square road sign with a person walking across a zebra crossing.</desc>
+  <circle cx="90" cy="90" r="86" fill="#f5f1ff"/><rect x="32" y="25" width="116" height="130" rx="7" fill="#2877b9"/>
+  <path d="m42 127 18-11h76l8 11v12H42z" fill="#fff"/><path d="m70 127 8-11h11l-5 11m20 0 8-11h11l2 11" fill="#2877b9"/>
+  <circle cx="91" cy="63" r="10" fill="#fff"/><path d="m87 76-8 24 16 9 9 20m-14-30 18 10 8-9m-32 0-14 14-10 1" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

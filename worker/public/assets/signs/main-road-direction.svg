@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">Main road direction supplementary sign</title><desc id="desc">A diagram showing the priority road bending to the right at an intersection.</desc>
+  <circle cx="90" cy="90" r="86" fill="#f5f1ff"/><rect x="27" y="30" width="126" height="120" rx="9" fill="#fff" stroke="#34313f" stroke-width="5"/>
+  <path d="M90 42v29c0 16 9 25 25 25h20" fill="none" stroke="#302d38" stroke-width="16" stroke-linecap="square"/>
+  <path d="M90 42v29c0 16 9 25 25 25h20" fill="none" stroke="#ffcf4a" stroke-width="10" stroke-linecap="square"/>
+  <path d="M90 112v24" stroke="#302d38" stroke-width="11"/><path d="M90 112v24" stroke="#fff" stroke-width="5"/>
+</svg>

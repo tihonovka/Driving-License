@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">No overtaking sign</title><desc id="desc">A white circular sign with a red border and two cars side by side.</desc>
+  <circle cx="90" cy="90" r="70" fill="#fff" stroke="#d44855" stroke-width="12"/>
+  <g stroke="#292733" stroke-width="4" stroke-linejoin="round"><path d="m49 93 5-17a7 7 0 0 1 7-5h25a7 7 0 0 1 7 5l5 17v20H49z" fill="#292733"/><path d="M57 90h34l-4-13H61z" fill="#f7f5fa"/><circle cx="61" cy="113" r="6" fill="#f7f5fa"/><circle cx="89" cy="113" r="6" fill="#f7f5fa"/>
+  <path d="m85 91 5-17a7 7 0 0 1 7-5h25a7 7 0 0 1 7 5l5 17v22H85z" fill="#426fc0"/><path d="M94 88h34l-4-13H98z" fill="#f7f5fa"/><circle cx="98" cy="112" r="6" fill="#f7f5fa"/><circle cx="126" cy="112" r="6" fill="#f7f5fa"/></g>
+</svg>

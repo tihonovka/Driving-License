@@ -10,6 +10,16 @@ function json(body, status, origin) {
   return new Response(JSON.stringify(body), { status, headers });
 }
 
+function resolveOrigin(request, env) {
+  try {
+    const allowed = env.ALLOWED_ORIGIN.split(",").map((value) => new URL(value.trim()).origin);
+    const requestOrigin = request.headers.get("Origin") || new URL(request.url).origin;
+    return allowed.includes(requestOrigin) ? requestOrigin : null;
+  } catch {
+    return null;
+  }
+}
+
 function decodeBase64Url(value) {
   if (typeof value !== "string" || !/^[A-Za-z0-9_-]+$/u.test(value)) throw new Error("invalid");
   const binary = atob(value.replaceAll("-", "+").replaceAll("_", "/") + "=".repeat((4 - value.length % 4) % 4));
@@ -74,9 +84,8 @@ async function createSession(userId, env, origin) {
 }
 
 async function authEndpoint(request, env, route) {
-  let origin = null;
-  try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
-  if (request.headers.get("Origin") !== origin) return json({ error: "Not allowed." }, 403, null);
+  const origin = resolveOrigin(request, env);
+  if (!origin) return json({ error: "Not allowed." }, 403, null);
   if (request.method === "OPTIONS") return authPreflight(origin);
   if (request.method !== "POST") return json({ error: "Method not allowed." }, 405, origin);
   try {
@@ -178,9 +187,8 @@ async function getAttemptGuard(request, env, action, questionId, sessionId, toke
 }
 
 async function issueAttempt(request, env) {
-  let origin = null;
-  try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
-  if (request.headers.get("Origin") !== origin) return json({ error: "Not allowed." }, 403, null);
+  const origin = resolveOrigin(request, env);
+  if (!origin) return json({ error: "Not allowed." }, 403, null);
   if (request.method === "OPTIONS") {
     return authPreflight(origin);
   }
@@ -244,9 +252,8 @@ async function loadQuestions(env, requestUrl) {
 }
 
 async function getQuestions(request, env) {
-  let origin = null;
-  try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
-  if (request.headers.get("Origin") !== origin) return json({ error: "Not allowed." }, 403, null);
+  const origin = resolveOrigin(request, env);
+  if (!origin) return json({ error: "Not allowed." }, 403, null);
   if (request.method === "OPTIONS") {
     return authPreflight(origin);
   }
@@ -271,9 +278,8 @@ function sameSecret(a, b) {
 }
 
 async function getAdminAnswers(request, env) {
-  let origin = null;
-  try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
-  if (request.headers.get("Origin") !== origin) return json({ error: "Not allowed." }, 403, null);
+  const origin = resolveOrigin(request, env);
+  if (!origin) return json({ error: "Not allowed." }, 403, null);
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, Authorization", "Access-Control-Max-Age": "86400", "Vary": "Origin" } });
   }
@@ -294,10 +300,8 @@ async function getAdminAnswers(request, env) {
 }
 
 export async function checkAnswer(request, env) {
-  let origin = null;
-  try { origin = new URL(env.ALLOWED_ORIGIN).origin; } catch { return json(GENERIC_ERROR, 500, null); }
-  const requestOrigin = request.headers.get("Origin");
-  if (requestOrigin !== origin) return json({ error: "Not allowed." }, 403, null);
+  const origin = resolveOrigin(request, env);
+  if (!origin) return json({ error: "Not allowed." }, 403, null);
   if (request.method === "OPTIONS") {
     return authPreflight(origin);
   }

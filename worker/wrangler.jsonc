@@ -21,7 +21,7 @@
     { "tag": "v1", "new_sqlite_classes": ["AttemptGuard"] }
   ],
   "vars": {
-    "ALLOWED_ORIGIN": "https://tihonovka.github.io"
+    "ALLOWED_ORIGIN": "https://tihonovka.github.io,https://driving-license-answer-checker.driving-license-practice.workers.dev"
   },
   "assets": {
     "directory": "./public",
