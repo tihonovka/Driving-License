@@ -37,6 +37,7 @@
     guestCard.hidden = false;
     practicePanel.hidden = true;
     $("pageNote").hidden = true;
+    $("railProgress").hidden = true;
     logoutButton.hidden = true;
   }
 
@@ -55,6 +56,7 @@
     $("questionIllustration").hidden = true;
     $("answers").replaceChildren();
     $("feedback").hidden = true;
+    $("successBurst").hidden = true;
     $("topicOptions").replaceChildren();
   }
 
@@ -143,7 +145,7 @@
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("drive-theme", theme);
     $("themeToggle").setAttribute("aria-label", `Switch to ${theme === "dark" ? "light" : "dark"} theme`);
-    document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#0b0a14" : "#f5f2fb";
+    document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#000000" : "#f5f2fb";
   }
   setTheme(localStorage.getItem("drive-theme") || "dark");
   $("themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
@@ -178,8 +180,9 @@
     const question = visibleQuestions[index];
     if (!question) return;
     selected = null; checked = false;
-    $("questionIndex").textContent = String(index + 1).padStart(2, "0");
-    $("questionTotal").textContent = String(visibleQuestions.length).padStart(2, "0");
+    $("railQuestionIndex").textContent = String(index + 1).padStart(2, "0");
+    $("railQuestionTotal").textContent = String(visibleQuestions.length).padStart(2, "0");
+    $("railProgress").setAttribute("aria-label", `Question ${index + 1} of ${visibleQuestions.length}`);
     $("progressFill").style.width = `${((index + 1) / visibleQuestions.length) * 100}%`;
     $("questionCategory").textContent = question.category;
     $("questionText").textContent = question.question;
@@ -190,12 +193,13 @@
     question.options.forEach((answer, answerIndex) => {
       const button = document.createElement("button");
       button.type = "button"; button.className = "answer-option"; button.setAttribute("role", "radio"); button.setAttribute("aria-checked", "false");
-      button.innerHTML = `<span class="answer-letter">${String.fromCharCode(65 + answerIndex)}</span><span class="answer-text" lang="hu"></span><span class="answer-check" aria-hidden="true">✓</span>`;
+      button.innerHTML = `<span class="answer-letter">${String.fromCharCode(65 + answerIndex)}</span><span class="answer-text" lang="hu"></span><span class="answer-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>`;
       button.querySelector(".answer-text").textContent = answer;
       button.addEventListener("click", () => { if (checked) return; selected = answerIndex; [...answers.children].forEach((el, i) => { el.classList.toggle("selected", i === selected); el.setAttribute("aria-checked", String(i === selected)); }); actionButton.disabled = false; });
       answers.append(button);
     });
     $("feedback").hidden = true; $("feedback").classList.remove("incorrect");
+    $("successBurst").hidden = true;
     $("sourceLink").hidden = true;
     $("actionLabel").textContent = "Check answer"; actionButton.disabled = true;
   }
@@ -204,6 +208,7 @@
     const question = visibleQuestions[index]; checked = true;
     if (!quizApiUrl) {
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
+      $("successBurst").hidden = true;
       $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Checker unavailable";
       $("feedbackText").textContent = "The answer checker is not connected yet.";
       return;
@@ -229,6 +234,8 @@
       if (correct) { score += 1; $("scoreCount").textContent = String(score); }
       [...$("answers").children].forEach((el, i) => { el.disabled = true; if (i === selected) el.classList.add(correct ? "correct" : "incorrect"); });
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.toggle("incorrect", !correct);
+      $("successBurst").hidden = !correct;
+      if (!correct) $("answers").children[selected].querySelector(".answer-check").innerHTML = "×";
       $("feedbackIcon").textContent = correct ? "✓" : "!";
       $("feedbackTitle").textContent = correct ? "Correct" : "Not quite";
       $("feedbackText").textContent = "Keep practicing the Hungarian road rules.";
@@ -248,6 +255,7 @@
         checked = true;
         [...$("answers").children].forEach((el) => { el.disabled = true; });
         const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
+        $("successBurst").hidden = true;
         $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Attempt already used";
         $("feedbackText").textContent = "This question was already checked in this quiz run. Start a new quiz run to try it again.";
         $("actionLabel").textContent = index === visibleQuestions.length - 1 ? "Start again" : "Next question";
@@ -256,6 +264,7 @@
       }
       checked = false;
       const feedback = $("feedback"); feedback.hidden = false; feedback.classList.add("incorrect");
+      $("successBurst").hidden = true;
       $("feedbackIcon").textContent = "!"; $("feedbackTitle").textContent = "Could not check answer";
       $("feedbackText").textContent = error.status === 429 ? "Too many requests. Please wait a minute and try again." : "Please try again in a moment.";
       [...$("answers").children].forEach((el) => { el.disabled = false; });
@@ -293,6 +302,7 @@
       guestCard.hidden = true;
       practicePanel.hidden = false;
       $("pageNote").hidden = false;
+      $("railProgress").hidden = false;
       logoutButton.hidden = false;
       return true;
     } catch {

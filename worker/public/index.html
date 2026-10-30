@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0a14">
+  <meta name="theme-color" content="#000000">
   <meta name="description" content="A calm, focused Hungarian driving theory practice experience.">
   <title>Drive — Theory Practice</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,15 +43,19 @@
     <a class="brand-mark" href="#" aria-label="Drive home">
       <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 28.5 13.6 18a4 4 0 0 1 3.8-2.7h13.2a4 4 0 0 1 3.8 2.7L38 28.5v8.2a2.3 2.3 0 0 1-2.3 2.3h-1.4a2.3 2.3 0 0 1-2.3-2.3v-2H16v2a2.3 2.3 0 0 1-2.3 2.3h-1.4a2.3 2.3 0 0 1-2.3-2.3z"/><path d="M14.4 25.7h19.2M17 31h.1m13.8 0h.1"/></svg>
     </a>
-    <div class="rail-spacer"></div>
     <button class="rail-button logout-button" id="logoutButton" aria-label="Sign out" title="Sign out" hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4m4-4H9"/></svg>
     </button>
+    <div class="rail-progress" id="railProgress" aria-label="Question progress" hidden>
+      <span id="railQuestionIndex">01</span>
+      <span class="rail-progress-line"></span>
+      <span id="railQuestionTotal">18</span>
+    </div>
+    <div class="rail-spacer"></div>
     <button class="rail-button theme-toggle" id="themeToggle" aria-label="Switch to light theme" title="Switch theme">
       <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.7"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
       <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8 8.8 8.8 0 1 0 20.2 15.1Z"/></svg>
     </button>
-    <div class="rail-caption">THEORY PRACTICE</div>
   </aside>
 
   <main class="page-shell">
@@ -87,7 +91,6 @@
             <div class="topic-menu-inner" id="topicOptions"></div>
           </div>
         </div>
-        <div class="progress-meta"><span id="questionIndex">01</span><span class="progress-divider">/</span><span id="questionTotal">18</span><span class="progress-word">QUESTIONS</span></div>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
@@ -99,6 +102,7 @@
         <div class="answers" id="answers" role="radiogroup" aria-label="Answer choices"></div>
         <div class="feedback glass" id="feedback" hidden aria-live="polite">
           <div class="feedback-heading"><span class="feedback-icon" id="feedbackIcon"></span><strong id="feedbackTitle"></strong><a id="sourceLink" target="_blank" rel="noreferrer" hidden>Official KRESZ ↗</a></div>
+          <div class="success-burst" id="successBurst" aria-hidden="true" hidden><span class="success-orb"><svg viewBox="0 0 40 40"><path d="m10 21 7 7 14-16"/></svg></span></div>
           <p lang="hu" id="feedbackText"></p>
         </div>
       </div>
@@ -111,7 +115,7 @@
 
     <p class="page-note" id="pageNote" hidden>Take your time. You can always try again.</p>
   </main>
-  <script src="api-config.js?v=20261030-private-entry"></script>
-  <script src="app.js?v=20261030-private-entry"></script>
+  <script src="api-config.js?v=20261030-liquid-dock"></script>
+  <script src="app.js?v=20261030-liquid-dock"></script>
 </body>
 </html>
